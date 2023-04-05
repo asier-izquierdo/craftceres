@@ -11,3 +11,12 @@ Currently supports Minecraft updates only up to version 1.29.9 due to the PaperM
 
 - The updater doesn't currently support restarting the server with the previous functional build of PaperMC if the execution fails with exit code 4.
 - The updater doesn't currently delete or archive previous builds of PaperMC.
+
+## backer.sh
+
+Designed to be run as a cron job (currently running at 0 21 * * 0,4)  with root permissions.
+
+### Limitations
+
+- The backer doesn't currently back up Dynmap's MySQL database.
+- The backer doesn't currently restart the server if the execution stops due to an error.
