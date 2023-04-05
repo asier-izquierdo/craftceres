@@ -9,7 +9,7 @@ then
         echo "[INFO] [$(date)] Created log for the PaperMC updater script." > $logfile
 fi
 
-echo "[INFO] [$(date)] Starting script execution..." >> $logfile
+echo "[INFO] [$(date)] Starting updater execution..." >> $logfile
 
 version=$(curl https://papermc.io/downloads/paper | grep -Eo "1\.[1-2][0-9]\.[0-9]" | sort -r | head -1)
 
