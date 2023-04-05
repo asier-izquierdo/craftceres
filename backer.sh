@@ -58,7 +58,8 @@ else
 fi
 
 sleep 20
-tmux send-keys -t $tmuxsession:0 "java -Xmx2G -Xms16G -jar $jarroute/paper-$version-$latest.jar nogui" Enter
+jar=$(find / -name 'paper-1.*.jar' -maxdepth 3 2> /dev/null)
+tmux send-keys -t $tmuxsession:0 "java -Xmx2G -Xms16G -jar $jar nogui" Enter
 
 if [ $? -eq 0 ]
 then 
