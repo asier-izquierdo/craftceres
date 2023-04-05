@@ -6,10 +6,10 @@ tmuxsession="<name of the tmux session where papermc is running>"
 
 if [ ! -f $logfile ]
 then
-        echo 'Created log for the PaperMC updater script' > $logfile
+        echo "[INFO] [$(date)] Created log for the PaperMC updater script." > $logfile
 fi
 
-echo "[$(date)] Starting script execution..." >> $logfile
+echo "[INFO] [$(date)] Starting script execution..." >> $logfile
 
 version=$(curl https://papermc.io/downloads/paper | grep -Eo "1\.[1-2][0-9]\.[0-9]" | sort -r | head -1)
 
@@ -26,7 +26,7 @@ then
                 sleep 20
                 wget https://api.papermc.io/v2/projects/paper/versions/$version/builds/$latest/downloads/paper-$version-$latest.jar -P $jarroute
         else
-                echo "[WARNING: 2] The PaperMC server was not running. [$(date)]" >> $logfile
+                echo "[WARNING: 2] [$(date)] The PaperMC server was not running." >> $logfile
                 exit 2
         fi
 
@@ -37,21 +37,21 @@ then
 
                 if [[ -z $(pidof java) ]]
                 then
-                        echo "[ERROR: 4] The server failed to start using the latest PaperMC build. [$(date)]" >> $logfile
+                        echo "[ERROR: 4] [$(date)] The server failed to start using the latest PaperMC build." >> $logfile
                         exit 4
                 fi
 
         else
-                echo "[ERROR: 3] The latest PaperMC version could not be downloaded. [$(date)]" >> $logfile
+                echo "[ERROR: 3] [$(date)] The latest PaperMC version could not be downloaded." >> $logfile
                 exit 3
         fi
 
 else
-        echo "[INFO: 1] There were no updates for the server. [$(date)]" >> $logfile
+        echo "[INFO: 1] [$(date)] There were no updates for the server." >> $logfile
         exit 1
 
 fi
 
-echo "[INFO: 0] The PaperMC server has successfully been updated and restarted. [$(date)]" >> $logfile
+echo "[INFO: 0] [$(date)] The PaperMC server has successfully been updated and restarted." >> $logfile
 
 return 0
