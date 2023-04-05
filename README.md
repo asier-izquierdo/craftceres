@@ -4,8 +4,8 @@ This repository contains the configuration files used for the CraftCeres Minecra
 
 ## updater.sh
 
-Designed to be run as a cron job (currently running at 0 7 * * 1,4) with root permissions, since PaperMC is (or should be) run by an user with limited permissions.<br>
-Currently supports Minecraft updates up to version 1.29.9 due to the PaperMC API returning 1.30+ values that made `sort` inaccurately list the latest version.
+Designed to be run as a cron job (currently running at 0 7 * * 1) with root permissions, since PaperMC is (or should be) run by an user with limited permissions.<br>
+Currently supports Minecraft updates only up to version 1.29.9 due to the PaperMC API returning 1.30+ values that made `sort` inaccurately list the latest version.
 
 ### Limitations
 
