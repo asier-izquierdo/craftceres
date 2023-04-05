@@ -54,4 +54,4 @@ fi
 
 echo "[INFO: 0] [$(date)] The PaperMC server has successfully been updated and restarted." >> $logfile
 
-return 0
+exit 0
