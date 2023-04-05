@@ -1,0 +1,237 @@
+:root {
+  --cc-color:#ff0000;
+  --lineleft: #d5d5d5;
+  --body-bg: #f9f9fbfd;
+  --text-color: #000000c2;
+  --underline-color: #656565;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --dim: 0.8;
+    --body-bg: #2c2c2e;
+    --text-color: #f9f9fbfd;
+    --underline-color: #f9f9fb88;
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+}
+
+body {
+  height: auto;
+  display: flex;
+  padding: 30px;
+  align-items: center;
+  font-family: system-ui;
+  flex-direction: column;
+  color: var(--text-color);
+  background-color: var(--body-bg);
+}
+
+.logo-and-brand {
+  gap: 10px;
+  width: 80%;
+  margin: 40px;
+  margin-bottom: 30px;
+  display: flex;
+  opacity: var(--dim);
+  align-items: center;
+  text-decoration: none;
+  justify-content: center;
+}
+
+.craftceres-logo {
+  width: 45px;
+  height: auto;
+}
+
+.brand {
+  font-size: 35px;
+  color: var(--text-color);}
+
+p {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.copiar {
+  opacity: 0;
+  font-size: small;
+  margin-bottom: 5px;
+}
+
+.copiado {
+  opacity: 0.4;
+  transition: 0.4s;
+}
+
+#mcserver {
+  font-size: large;
+  opacity: var(--dim);
+  font-family: monospace;
+  margin-bottom: 0px;
+}
+
+#mcserver:hover {cursor: pointer}
+
+
+#estados{
+  border-radius: 15px;
+  padding: 4px;
+  color: var(--text-color);
+  margin: 8px;
+  font-size:xx-small;
+  font-family: monospace;
+}
+
+#links-wrapper {
+  width: 70%;
+  min-width: 180px;
+  max-width: 580px;
+  border-top: 2px solid var(--cc-color);
+}
+
+.search-wrapper {
+  border: none;
+  margin: auto;
+  display: flex;
+  margin-top: 2vw;
+  width:fit-content;
+  position:relative;
+  flex-direction: column;
+  justify-content:space-between;
+}
+
+.form {
+  width: 40vw;
+  margin: 10px;
+  border: none;
+  margin: 10px;
+  height: 35px;
+  font-size: 14px;
+  max-width: 180px;
+  text-align: center;
+}
+
+.link {
+  padding: 5px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--text-color);
+  border: solid 2px var(--cc-color);
+}
+  
+.link:hover {
+  transition: 0.2s;
+  color: var(--body-bg);
+  background-color: var(--cc-color);
+}
+
+#infonormas {
+  width: 70%;
+  min-width: 180px;
+  max-width: 580px;
+  opacity: var(--dim);
+  border-top: 2px solid var(--cc-color);
+  width: 100%;
+}
+
+
+.faq {
+  width: 90%;
+  margin: auto;
+  min-width: 180px;
+  max-width: 580px;
+  opacity: var(--dim);
+  text-align: left;
+  margin-bottom: 20px;
+  color: var(--text-color);
+}
+
+.faq a {
+  color: var(--text-color);
+}
+
+.faq a:hover {
+  transition: 0.2s;
+  color: var(--cc-color)
+}
+
+.normas {
+  width: 90%;
+  margin: auto;
+  min-width: 180px;
+  max-width: 580px;
+  opacity: var(--dim);
+  text-align: left;
+  margin-bottom: 20px;
+  color: var(--text-color);
+}
+
+.normas dt {
+  padding-left: 12px;
+  border-left: 3px solid var(--lineleft);
+}
+
+.normas dd {
+  padding-left: 12px;
+  border-left: 3px solid var(--lineleft);
+}
+
+h4 {
+  text-align: center;
+  margin: 40px;
+}
+
+.under {
+  font-weight: bold;
+  font-style: italic;
+}
+
+.section-wrapper {
+  width: 90%;
+  padding: 10px;
+  display: flex;
+  max-width: 580px;;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid var(--underline-color);
+}
+
+#navig {
+  margin-top: 40px;
+  opacity: var(--dim);
+}
+
+#navig a:hover {
+  transition: 0.2s;
+  color: var(--cc-color);
+}
+
+#navig a{
+  color: var(--text-color);
+  opacity: var(--dim);
+}
+
+footer {
+  font-size: small;
+  margin-top: 40px;
+  min-height: 60px;
+  opacity: var(--dim);
+}
+
+#love {height: 10px}
+
+.undername {
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: var(--underline-color);
+}
+
+.copy a {color: var(--text-color);} 
