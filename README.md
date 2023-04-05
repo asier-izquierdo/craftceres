@@ -9,5 +9,5 @@ Currently supports Minecraft updates up to version 1.29.9 due to the PaperMC API
 
 ### Limitations
 
-- The updater doesn't currently support restarting the server with the previous functional build of PaperMC if the execution fails with esit code 4.
-- The updater doesn't currently delete or archive previous buiilds of PaperMC.
+- The updater doesn't currently support restarting the server with the previous functional build of PaperMC if the execution fails with exit code 4.
+- The updater doesn't currently delete or archive previous builds of PaperMC.
