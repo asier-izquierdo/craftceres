@@ -1,7 +1,7 @@
 #!/bin/bash
 
-logfile="<route to log file>"
-jarroute="<route to papermc.jar parent diretory>"
+logfile="<path to log file>"
+jarroute="<path to papermc.jar parent diretory>"
 tmuxsession="<name of the tmux session where papermc is running>"
 
 if [ ! -f $logfile ]
