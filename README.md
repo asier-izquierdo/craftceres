@@ -4,7 +4,7 @@ This repository contains the configuration files for the PaperMC java server, th
 
 ## updater.sh
 
-Cron job running at 0 7 * * 1<br>
+Cron job running at [0 7 * * 1]<br>
 Currently supports Minecraft updates only up to version 1.29.9 due to the PaperMC API returning 1.30+ values that made `sort` inaccurately list the latest version.
 Designed to update any PaperMC server setup. It should be run with `sudo` unless set as a cron job since PaperMC is (or should be) run by an user with limited permissions.
 
@@ -15,7 +15,7 @@ Designed to update any PaperMC server setup. It should be run with `sudo` unless
 
 ## backer.sh
 
-Cron job running at 0 21 * * 0,4, should be run with `sudo`, too.
+Cron job running at [0 21 * * 0,4], should be run with `sudo`, too.
 
 ### Limitations
 
