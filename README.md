@@ -20,4 +20,3 @@ Cron job running at [0 21 * * 0,4], should be run with `sudo`, too.
 ### Limitations
 
 - The backer doesn't currently back up Dynmap's MySQL database.
-- The backer doesn't currently restart the server if the execution stops due to an error.
