@@ -8,6 +8,23 @@ ruser="<remote user for rsync>"
 rhost="<remote host for rsync>"
 rdir="<path to the backups directory of the remote host>"
 
+function initserver {
+	echo "[INFO] [$(date)] Attempting to restart the server..." >> $logfile
+
+	jar=$(find / -name 'paper-1.*.jar' -maxdepth 3 2> /dev/null)
+	tmux send-keys -t $tmuxsession:0 "java -Xmx2G -Xms16G -jar $jar nogui" Enter
+	sleep 20
+
+	if [[ -n $(pidof java) ]]
+	then
+		echo "[INFO] [$(date)] Server successfully restarted." >> $logfile
+		return 0
+	else	
+		echo "[ERROR: 3] [$(date)] The server could not restart." >> $logfile
+		return 3
+	fi
+}
+
 if [ ! -f $logfile ]
 then
         echo "[INFO] [$(date)] Created log for the PaperMC backer script." > $logfile
@@ -20,7 +37,7 @@ then
         tmux send-keys -t $tmuxsession:0 "stop" Enter
         sleep 20
 else
-        echo "[WARNING: 1] [$(date)] The PaperMC server was not running. A backup will still be made." >> $logfile
+        echo "[WARNING: 1] [$(date)] The PaperMC server was not running. Nevertheless, a backup will still be made." >> $logfile
         exit 1
 fi
 
@@ -42,14 +59,16 @@ then
                 if [ $? -ne 0 ] 
                 then
                         echo "[ERROR 5] [$(date)] The backup could not be transfrered to the destination host." >> $logfile
-                        exit 5
+                        initserver
+			exit 5
                 else    
                         echo "[INFO] [$(date)] The backup has successfully been transferred to the destination host" >> $logfile
                 fi
 
         else
                 echo "[ERROR: 4] [$(date)] The world backup failed." >> $logfile  
-                exit 4
+                initserver
+		exit 4
         fi
 
 else
@@ -57,15 +76,13 @@ else
         exit 2
 fi
 
-sleep 20
-jar=$(find / -name 'paper-1.*.jar' -maxdepth 3 2> /dev/null)
-tmux send-keys -t $tmuxsession:0 "java -Xmx2G -Xms16G -jar $jar nogui" Enter
+# Normal server restart, meaning there were no errors.
+initserver
 
 if [ $? -eq 0 ]
 then 
         echo "[INFO: 0] [$(date)] The world has successfully been backed up, transferred to the destination, and the server has successfully been restarted." >> $logfile
         exit 0
 else
-        echo "[ERROR: 3] [$(date)] The server could not restart." >> $logfile 
         exit 3
 fi
