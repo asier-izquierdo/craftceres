@@ -32,4 +32,5 @@ This is just the configuration file that Nginx uses in order to pass the request
 #
 
 CraftCeres runs thanks to [PaperMC](https://github.com/PaperMC).<br>
-The webpage uses the [minestat repository](https://github.com/FragLand/minestat) in order to ping the server for the status bar.
+The map is generated and served with (Dynmap)[https://github.com/Dynmap].<br>
+The webpage uses [minestat](https://github.com/FragLand/minestat) to ping the server for the status bar.
