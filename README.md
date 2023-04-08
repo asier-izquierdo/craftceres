@@ -25,6 +25,10 @@ Cron job running at [0 21 * * 0,4]. Should be run with `sudo`, too.
 
 - The backer doesn't currently back up Dynmap's MySQL database.
 
+## reverse-proxy.conf
+
+This is just the configuration file that Nginx uses in order to pass the requests to either the webpage or the Dynmap service.
+
 #
 
 CraftCeres runs thanks to [PaperMC](https://github.com/PaperMC).<br>
