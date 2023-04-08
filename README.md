@@ -4,7 +4,7 @@ This repository contains the configuration files for the PaperMC java server, th
 The "server" folder contains only the files that have been altered from those PaperMC auto-generated. Inside the folder, any child directory will be as-is, so that on a fresh installation, this repository can be cloned in order for server to be pre-configured, only auto-generating those that don't need further configuration.
 ## updater.sh
 
--The updater script is in charge of updating the server with the latest PaperMC build in a weekly basis.
+__The updater script is in charge of updating the server with the latest PaperMC build in a weekly basis.__
 
 The cron job is running at [0 7 * * 1]<br>
 Currently supports Minecraft updates only up to version 1.29.9 due to the PaperMC API returning 1.30+ values that made `sort` inaccurately list the latest version.<br>
@@ -17,7 +17,7 @@ Designed to update _any_ PaperMC server setup. It should be run with `sudo` unle
 
 ## backer.sh
 
--The backer script is (or should be) in charge of backing up both the world and the Dynmap's MySQL database.
+__The backer script is (_or should be_) in charge of backing up both the world and the Dynmap's MySQL database.__
 
 Cron job running at [0 21 * * 0,4]. Should be run with `sudo`, too.
 
