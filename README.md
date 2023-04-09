@@ -17,7 +17,7 @@ Designed to update _any_ PaperMC server setup. It should be run with `sudo` unle
 
 ## backer.sh
 
-__The backer script is (_or should be_) in charge of backing up both the world and the Dynmap's MySQL database.__
+__The backer script is (_or should be_) in charge of backing up both the world and the Dynmap's MySQL database to an external storage.__
 
 Cron job running at [0 21 * * 0,4]. Should be run with `sudo`, too.
 
