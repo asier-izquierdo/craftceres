@@ -12,17 +12,7 @@ version=$(curl https://papermc.io/downloads/paper | grep -Eo "1\.[1-2][0-9]\.[0-
 latest=$(curl https://api.papermc.io/v2/projects/paper/versions/$version/builds/ | grep -Eo '"build":[0-9]{1,4}' | sort -r | head -1 | cut -d: -f 2)
 
 server_starter() {
-
-        case $1 in
-                previous)
-                        which=previous
-                        ;;
-                latest)
-                        which=latest
-                        ;;
-        esac
-
-        echo "[INFO  ($(date))] Restarting the server wit the $which build..." >> $logfile
+        echo "[INFO  ($(date))] Restarting the server wit the $1 build..." >> $logfile
         sleep 20
         tmux send-keys -t $tmuxsession:0 "java -Xmx2G -Xms16G -jar $jarroute/paper-$version-$2.jar nogui" Enter
 }
@@ -32,7 +22,7 @@ error_handler() {
         local error_message=$2
         echo "[ERROR: $error_code  ($(date))] $error_message" >> $logfile
 
-        server_starter previous $current
+        server_starter "previous" $current
 
         exit $error_code
 }
@@ -83,7 +73,7 @@ then
 
         if [ -f $jarroute/paper-$version-$latest.jar ]
         then
-                server_starter latest $latest
+                server_starter "latest" $latest
 
                 if [[ -z $(pidof java) ]]
                 then    error_handler 6 "The server failed to start using the latest PaperMC build."
