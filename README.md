@@ -16,8 +16,8 @@ Designed to update _any_ PaperMC server setup. It should be run with `sudo` unle
 
 ### Limitations
 
-- It doesn't currently support restarting the server with the previous functional build of PaperMC if the execution fails with exit code 4.
-- It updater doesn't currently delete or archive previous builds of PaperMC.
+- It doesn't currently support restarting the server with the previous functional build of PaperMC if the execution fails.
+- It updater doesn't currently delete previous builds of PaperMC.
 
 ## backer.sh
 
