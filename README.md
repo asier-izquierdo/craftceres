@@ -16,7 +16,7 @@ Designed to update _any_ PaperMC server setup. It should be run with `sudo` unle
 
 ### Limitations
 
-- It updater doesn't currently delete previous builds of PaperMC.
+- It doesn't currently delete previous builds of PaperMC.
 
 ## backer.sh
 
@@ -26,7 +26,7 @@ Cron job running at [0 21 * * 0,4]. Should be run with `sudo`, too.
 
 ### Limitations
 
-- The backer doesn't currently back up Dynmap's MySQL database.
+- It doesn't currently back up Dynmap's MySQL database.
 
 ## reverse-proxy.conf
 
