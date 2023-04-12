@@ -20,10 +20,13 @@ server_starter() {
 error_handler() {
         local error_code=$1
         local error_message=$2
+         
         echo "[ERROR: $error_code  ($(date))] $error_message" >> $logfile
-
-        server_starter "previous" $current
-
+        
+        if [ error_code -ne 3 ]
+        then server_starter "previous" $current
+        fi
+        
         exit $error_code
 }
 
