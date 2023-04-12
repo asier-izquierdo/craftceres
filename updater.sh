@@ -51,9 +51,9 @@ handler() {
 }
 
 check_dependency() {
-  command -v "$1" >/dev/null 2>&1 || {
-    handler 7 "ERROR" "Missing dependency $1."
-  }
+        command -v "$1" >/dev/null 2>&1 || {
+                handler 7 "ERROR" "Missing dependency $1."
+        }
 }
 
 check_dependency "curl"
