@@ -25,7 +25,7 @@ handler() {
         echo "[$report_type: $report_code  ($(date))] $report_message" >> $logfile
         
         # If there has been an error other than 3, restart the server with the previously used PaperMC build
-        if [[ $report_code != 0 && $report_code != 1 && $report_code != 3 ]]
+        if [[ $report_code != 0 && $report_code != 2 && $report_code != 3 ]]
         then
 
                 # If the previously used PaperMC build has been archived, move it back
