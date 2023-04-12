@@ -13,7 +13,7 @@ BUILD_NUMBER_REGEX="[0-9]{3,4}"
 
 # Get the current local PaperMC, Minecraft, and available PaperMC versions, respectively.
 archive=$path/archive
-current=$(find $path -name "paper-$version*" 2> /dev/null | grep -Eow "[0-9]{3,4}" | sort -r | head -1)
+current=$(find $path -name "paper-$version*" 2> /dev/null | grep -Eow $BUILD_NUMBER_REGEX | sort -r | head -1)
 version=$(curl $PAPER_DOWNLOAD_URL | grep -Eo $MC_VERSION_REGEX | sort -r | head -1)
 latest=$(curl $PAPER_API_URL/versions/$version/builds/ | grep -Eo '"build":\$BUILD_NUMBER_REGEX' | sort -r | head -1 | cut -d: -f 2)
 
@@ -82,7 +82,7 @@ then
 
 fi
 
-if [ $current -lt $latest ]
+if [ -z "$current" ] || [ $current -lt $latest ]
 then
 
         if [ -n "$(pidof java)" ]
