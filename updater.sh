@@ -24,6 +24,12 @@ server_starter() {
         tmux send-keys -t $tmuxsession:0 "java -Xmx2G -Xms16G -jar $papermc_path/paper-$mc_version-$2.jar nogui" Enter
 }
 
+# Sends a stop signal to the running Java job through Tmux
+server_stopper() {
+        tmux send-keys -t $tmuxsession:0 "stop" Enter
+        sleep 20
+}
+
 # Handles errors and warnings, acting accordingly
 handler() {
         local report_type=$1
@@ -34,7 +40,7 @@ handler() {
         
         # Restart the server with the previously used PaperMC build if there has been an error other than 3, 2, or
         # if it has been correctly executed (0)
-        if [[ $report_code != 0 && $report_code != 2 && $report_code != 3 ]]
+        if [[ $report_code != 0 && $report_code != 2 && $report_code != 3 && $report_code != 7 && $report_code != 8 ]]
         then
 
                 # If the previously used PaperMC build has been archived, move it back
@@ -55,9 +61,11 @@ handler() {
 
 # Verifies that the values specified for the path/session variables exist
 check_input() {
+
         if [ ! -d $1 ]
         then    handler 8 "ERROR" "The specified path for $2 does not exist."
         fi
+
 }
 
 # Verifies that the required packages are present in the system
@@ -100,9 +108,9 @@ then
 
         if [ -n "$(pidof java)" ]
         then
-                tmux send-keys -t $tmuxsession:0 "stop" Enter
-                sleep 20
+                server_stopper
 
+                # Uses `check` to check, since using `$?` could lead to false positives
                 if [ -z "$(pidof java)" ]
                 then
                         wget https://api.papermc.io/v2/projects/paper/versions/$mc_version/builds/$latest_build/downloads/paper-$mc_version-$latest_build.jar -P $papermc_path
