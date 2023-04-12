@@ -5,11 +5,17 @@ path="<path to the papermc.jar parent diretory>"
 logfile="<path to log file>"
 tmuxsession="<name of the tmux session where papermc is running>"
 
+# Constants
+PAPER_DOWNLOAD_URL="https://papermc.io/downloads/paper"
+PAPER_API_URL="https://api.papermc.io/v2/projects/paper"
+MC_VERSION_REGEX="1\.[1-2][0-9]\.[0-9]"
+BUILD_NUMBER_REGEX="[0-9]{3,4}"
+
 # Get the current local PaperMC, Minecraft, and available PaperMC versions, respectively.
 archive=$path/archive
 current=$(find $path -name "paper-$version*" 2> /dev/null | grep -Eow "[0-9]{3,4}" | sort -r | head -1)
-version=$(curl https://papermc.io/downloads/paper | grep -Eo "1\.[1-2][0-9]\.[0-9]" | sort -r | head -1)
-latest=$(curl https://api.papermc.io/v2/projects/paper/versions/$version/builds/ | grep -Eo '"build":[0-9]{1,4}' | sort -r | head -1 | cut -d: -f 2)
+version=$(curl $PAPER_DOWNLOAD_URL | grep -Eo $MC_VERSION_REGEX | sort -r | head -1)
+latest=$(curl $PAPER_API_URL/versions/$version/builds/ | grep -Eo '"build":\$BUILD_NUMBER_REGEX' | sort -r | head -1 | cut -d: -f 2)
 
 server_starter() {
         handler INFO 0 "Restarting the server wit the $1 build..."
@@ -44,10 +50,21 @@ handler() {
 
 }
 
+check_dependency() {
+  command -v "$1" >/dev/null 2>&1 || {
+    handler 7 ERROR "Missing dependency $1."
+  }
+}
+
 # Create the log file if it doesn't already exist on the specified path
 if [ ! -f $logfile ]
 then    echo "[INFO: 0  ($(date))] Created log for the PaperMC updater script." > $logfile
 fi
+
+check_dependency "curl"
+check_dependency "tmux"
+check_dependency "java"
+check_dependency "wget"
 
 handler INFO 0 "Starting updater execution..."
 
