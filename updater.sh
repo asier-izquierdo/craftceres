@@ -15,7 +15,7 @@ BUILD_NUMBER_REGEX="[0-9]{3,4}"
 archive=$path/archive
 current=$(find $path -name "paper-$version*" 2> /dev/null | grep -Eow $BUILD_NUMBER_REGEX | sort -r | head -1)
 version=$(curl $PAPER_DOWNLOAD_URL | grep -Eo $MC_VERSION_REGEX | sort -r | head -1)
-latest=$(curl $PAPER_API_URL/versions/$version/builds/ | grep -Eo '"build":\$BUILD_NUMBER_REGEX' | sort -r | head -1 | cut -d: -f 2)
+latest=$(curl $PAPER_API_URL/versions/$version | grep -Eo $BUILD_NUMBER_REGEX | sort -r | head -1)
 
 server_starter() {
         handler "INFO" 0 "Restarting the server wit the $1 build..."
