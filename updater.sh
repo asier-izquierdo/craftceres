@@ -1,52 +1,66 @@
 #!/bin/bash
 
 # Modify these variables with the fitting values
+path="<path to the papermc.jar parent diretory>"
 logfile="<path to log file>"
-archive="<path to archives directory>"
-jarroute="<path to papermc.jar parent diretory>"
 tmuxsession="<name of the tmux session where papermc is running>"
 
 # Get the current local PaperMC, Minecraft, and available PaperMC versions, respectively.
-current=$(find $jarroute -name "paper-$version*" 2> /dev/null | grep -Eow "[0-9]{3,4}" | sort -r | head -1)
+archive=$path/archive
+current=$(find $path -name "paper-$version*" 2> /dev/null | grep -Eow "[0-9]{3,4}" | sort -r | head -1)
 version=$(curl https://papermc.io/downloads/paper | grep -Eo "1\.[1-2][0-9]\.[0-9]" | sort -r | head -1)
 latest=$(curl https://api.papermc.io/v2/projects/paper/versions/$version/builds/ | grep -Eo '"build":[0-9]{1,4}' | sort -r | head -1 | cut -d: -f 2)
 
 server_starter() {
-        echo "[INFO  ($(date))] Restarting the server wit the $1 build..." >> $logfile
+        handler INFO 0 "Restarting the server wit the $1 build..."
         sleep 20
-        tmux send-keys -t $tmuxsession:0 "java -Xmx2G -Xms16G -jar $jarroute/paper-$version-$2.jar nogui" Enter
+        tmux send-keys -t $tmuxsession:0 "java -Xmx2G -Xms16G -jar $path/paper-$version-$2.jar nogui" Enter
 }
 
-error_handler() {
-        local error_code=$1
-        local error_message=$2
+handler() {
+        local report_type=$1
+        local report_code=$2
+        local report_message=$3
          
-        echo "[ERROR: $error_code  ($(date))] $error_message" >> $logfile
+        echo "[$report_type: $report_code  ($(date))] $report_message" >> $logfile
         
-        if [ error_code -ne 3 ]
-        then server_starter "previous" $current
+        # If there has been an error other than 3, restart the server with the previously used PaperMC build
+        if [[ $report_code != 0 && $report_code != 1 && $report_code != 3 ]]
+        then
+
+                # If the previously used PaperMC build has been archived, move it back
+                if [ ! -f $path/$current ]
+                then mv $archive/$current $path
+                fi
+
+                server_starter "previous" $current
         fi
-        
-        exit $error_code
+
+        # Exit the script only if an error happens
+        if [[ $report_type == "ERROR" ]]
+        then    exit $report_code
+        else    return $report_code
+        fi
+
 }
 
 # Create the log file if it doesn't already exist on the specified path
 if [ ! -f $logfile ]
-then    echo "[INFO  ($(date))] Created log for the PaperMC updater script." > $logfile
+then    echo "[INFO: 0  ($(date))] Created log for the PaperMC updater script." > $logfile
 fi
 
-echo "[INFO  ($(date))] Starting updater execution..." >> $logfile
+handler INFO 0 "Starting updater execution..."
 
 # Create the archive directory to store the previously used PaperMC build if it doesn't already exist
 if [ ! -d $archive ]
 then
-        echo "[INFO  ($(date))] No archives directory found. Creating it..." >> $logfile
+        handler INFO 0 "No archives directory found. Creating it..."
 
         mkdir $archive 
 
         if [ $? -ne 0 ]
-        then    error_handler 2 "Could not create the archives directory. It is necessary for archiving previously working .jars in a tidied manener."
-        else    echo "[INFO  ($(date))] Created directory for archiving the latest working PaperMC .jar" >> $logfile
+        then    handler ERROR 2 "Could not create the archives directory. It is necessary for archiving previously working .jars in a tidied manener."
+        else    handler INFO 0 "Created directory for archiving the latest working PaperMC .jar"
         fi
 
 fi
@@ -54,42 +68,39 @@ fi
 if [ $current -lt $latest ]
 then
 
-        if [ -n $(pidof java) ]
+        if [ -n "$(pidof java)" ]
         then
                 tmux send-keys -t $tmuxsession:0 "stop" Enter
                 sleep 20
 
-                if [ -z $(pidof java) ]
+                if [ -z "$(pidof java)" ]
                 then
-                        wget https://api.papermc.io/v2/projects/paper/versions/$version/builds/$latest/downloads/paper-$version-$latest.jar -P $jarroute
+                        wget https://api.papermc.io/v2/projects/paper/versions/$version/builds/$latest/downloads/paper-$version-$latest.jar -P $path
 
                         if [ $? -ne 0 ]
-                        then    error_handler 5 "The latest PaperMC build could not be downloaded."
+                        then    handler ERROR 5 "The latest PaperMC build could not be downloaded."
                         else    mv $current $archive
                         fi
 
-                else    error_handler 3 "The server failed to stop."
+                else    handler ERROR 3 "The server failed to stop."
                 fi
 
-        else    echo "[WARNING:  ($(date))] The PaperMC server was not running." >> $logfile
+        else    handler WARNING 1 "The PaperMC server was not running." >> $logfile
         fi
 
-        if [ -f $jarroute/paper-$version-$latest.jar ]
+        if [ -f $path/paper-$version-$latest.jar ]
         then
                 server_starter "latest" $latest
 
-                if [[ -z $(pidof java) ]]
-                then    error_handler 6 "The server failed to start using the latest PaperMC build."
+                if [ -z "$(pidof java)" ]
+                then    handler ERROR 6 "The server failed to start using the latest PaperMC build."
                 fi
 
-        else    error_handler 4 "The latest PaperMC version could not be found."
+        else    handler ERROR 4 "The latest PaperMC version could not be found."
         fi
 
-        echo "[INFO: 0  ($(date))] The PaperMC server has successfully been updated and restarted." >> $logfile
-        exit 0
+        handler INFO 0 "The PaperMC server has successfully been updated and restarted."
 
-else
-        echo "[INFO: 1  ($(date))] There were no updates for the server." >> $logfile
-        exit 1
+else    handler INFO 0 "There were no updates for the server."
 
 fi
