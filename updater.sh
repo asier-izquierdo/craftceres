@@ -2,7 +2,7 @@
 
 # Modify these variables with the corresponding values
 papermc_path="<path to the papermc.jar parent diretory>"
-log_file_path="<path to log file>"
+log_file_path="<log file path>"
 tmuxsession="<name of the tmux session where papermc is running>"
 
 archive=$papermc_path/archive
