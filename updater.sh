@@ -74,7 +74,8 @@ check_dependency() {
                 handler 7 "ERROR" "Missing dependency $1."
         }
 }
-# Create the log file if it doesn't already exist on the specified path
+
+# Creates the log file if it doesn't already exist on the specified path
 if [ ! -f $log_file_path ]
 then    echo "[INFO: 0  ($(date))] Created log for the PaperMC updater script." > $log_file_path
 fi
@@ -89,7 +90,7 @@ check_dependency "tmux"
 check_dependency "java"
 check_dependency "wget"
 
-# Create the archive directory to store the previously used PaperMC build if it doesn't already exist
+# Creates the archive directory to store the previously used PaperMC build if it doesn't already exist
 if [ ! -d $archive ]
 then
         handler "INFO" 0 "No archives directory found. Creating it..."
