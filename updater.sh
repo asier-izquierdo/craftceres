@@ -51,7 +51,7 @@ handler() {
                 server_starter "previous" $current_build
         fi
 
-        # Exit the script only if an error happens
+        # Exit the script only if the call was for an error
         if [[ $report_type == "ERROR" ]]
         then    exit $report_code
         else    return $report_code
