@@ -14,9 +14,9 @@ BUILD_NUMBER_REGEX="[0-9]{3,4}"
 
 # Starts the PaperMC Java job with the specified build
 server_starter() {
-        handler "INFO" 0 "Restarting the server wit the $1 build..."
+        handler "INFO" 0 "Restarting the server with the $1 build..."
         sleep 20
-        tmux send-keys -t $tmuxsession:0 "java -Xmx2G -Xms16G -jar $papermc_path/paper-$mc_version-$2.jar nogui" Enter
+        tmux send-keys -t $tmuxsession:0 "java -Xmx16G -Xms2G -jar $papermc_path/paper-$mc_version-$2.jar nogui" Enter
 }
 
 # Sends a stop signal to the running Java job through Tmux
@@ -58,7 +58,7 @@ handler() {
 check_input() {
 
         if [ ! -d $1 ]
-        then    handler 8 "ERROR" "The specified path for $2 does not exist."
+        then    handler "ERROR" 8 "The specified path for $2 does not exist."
         fi
 
 }
