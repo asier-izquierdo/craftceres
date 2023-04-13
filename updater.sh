@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Modify these variables with the corresponding values
+# Modify these variables with the corresponding values (do not use "/" after a directory)
 papermc_path="<path to the papermc.jar parent diretory>"
 log_file_path="<log file path>"
 tmuxsession="<name of the tmux session where papermc is running>"
@@ -30,12 +30,16 @@ handler() {
         local report_type=$1
         local report_code=$2
         local report_message=$3
-         
-        echo "[$report_type: $report_code  ($(date))] $report_message" >> $log_file_path
-        
+
+        # Verbose progress and errors instead of logging them if the execution is manual instead of a cron job
+        if [ -n "$TERM" ]
+        then    echo "[$report_type: $report_code] ($(date))  $report_message"
+        else    echo "[$report_type: $report_code] ($(date))  $report_message" >> $log_file_path
+        fi
+
         # Restart the server with the previously used PaperMC build if there has been an error other than 3, 2, or
         # if it has been correctly executed (0)
-        if [[ $report_code != 0 && $report_code != 2 && $report_code != 3 && $report_code != 7 && $report_code != 8 ]]
+        if [[ ($report_code != 0) && ($report_code != 2) && ($report_code != 3) && ($report_code != 7) && ($report_code != 8) ]]
         then
 
                 # If the previously used PaperMC build has been archived, move it back
@@ -57,7 +61,7 @@ handler() {
 # Verifies that the values specified for the path/session variables exist
 check_input() {
 
-        if [ ! -d $1 ]
+        if [ ! -f $1 -a ! -d $1 ]
         then    handler "ERROR" 8 "The specified path for $2 does not exist."
         fi
 
@@ -66,13 +70,13 @@ check_input() {
 # Verifies that the required packages are present in the system
 check_dependency() {
         command -v "$1" >/dev/null 2>&1 || {
-                handler 7 "ERROR" "Missing dependency $1."
+                handler "ERROR" 7 "Missing dependency <$1>."
         }
 }
 
 # Get the current local PaperMC, Minecraft, and available PaperMC versions
 get() {
-        
+
         case $1 in
                 mc_version)
                         mc_version=$(curl $PAPER_API_URL | grep -Eo $MC_VERSION_REGEX | sort -r | head -1)
@@ -85,7 +89,7 @@ get() {
                         ;;
         esac
 
-        if [ $? -ne 0 ]
+        if [ $? -ne 0 -o -z "$1" ]
         then    handler "ERROR" 9 "Couldn't determine '$1'."
         fi
 
@@ -94,13 +98,13 @@ return 0
 
 # Creates the log file if it doesn't already exist on the specified path
 if [ ! -f $log_file_path ]
-then    echo "[INFO: 0  ($(date))] Created log for the PaperMC updater script." > $log_file_path
+then    echo "[INFO: 0] ($(date))  Created log for the PaperMC updater script." > $log_file_path
 fi
 
 handler "INFO" 0 "Starting updater execution..."
 
-check_input $papermc_path '"papermc_path"'
-check_input $log_file_path '"log_file_path"'
+check_input $papermc_path "<papermc_path>"
+check_input $log_file_path "<log_file_path>"
 
 check_dependency "curl"
 check_dependency "tmux"
