@@ -11,8 +11,8 @@ _Both the updater and the backer assume you use a `tmux` session for the server,
 __The updater script is in charge of updating the server with the latest PaperMC build in a weekly basis.__
 
 The cron job is running at [0 7 * * 1]<br>
-Currently supports Minecraft updates only up to version 1.29.9 due to the PaperMC API returning 1.30+ values that made `sort` inaccurately list the latest version.<br>
-Designed to update _any_ PaperMC server setup. It should be run with `sudo` unless set as a cron job since PaperMC is (or should be) run by an user with limited permissions.
+Currently supports Minecraft updates only up to version 1.99.9
+Designed to update _any_ PaperMC server setup. It should be run with `sudo` unless set as a cron job, since PaperMC is (or should be) run by an user with limited permissions.
 
 ### Limitations
 
