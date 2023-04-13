@@ -10,8 +10,7 @@ _Both the updater and the backer assume you use a `tmux` session for the server,
 
 __The updater script is in charge of updating the server with the latest PaperMC build in a weekly basis.__
 
-The cron job is running at [0 7 * * 1]<br>
-Currently supports Minecraft updates only up to version 1.99.9
+Currently supports Minecraft updates only up to version 1.99.9<br>
 Designed to update _any_ PaperMC server setup. It should be run with `sudo` unless set as a cron job, since PaperMC is (or should be) run by an user with limited permissions.
 
 ### Limitations
@@ -22,7 +21,7 @@ Designed to update _any_ PaperMC server setup. It should be run with `sudo` unle
 
 __The backer script is (_or should be_) in charge of backing up both the world and the Dynmap's MySQL database to an external storage.__
 
-Cron job running at [0 21 * * 0,4]. Should be run with `sudo`, too.
+Should be run with `sudo`, too.
 
 ### Limitations
 
