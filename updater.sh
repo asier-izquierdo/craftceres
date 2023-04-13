@@ -12,11 +12,6 @@ PAPER_API_URL="https://api.papermc.io/v2/projects/paper"
 MC_VERSION_REGEX="1\.[0-9]{2}\.[0-9]"
 BUILD_NUMBER_REGEX="[0-9]{3,4}"
 
-# Get the current local PaperMC, Minecraft, and available PaperMC versions, respectively
-current_build=$(find $papermc_path -name "paper-$mc_version*" 2> /dev/null | grep -Eow $BUILD_NUMBER_REGEX | sort -r | head -1)
-latest_build=$(curl $PAPER_API_URL/versions/$mc_version | grep -Eo $BUILD_NUMBER_REGEX | sort -r | head -1)
-mc_version=$(curl $PAPER_API_URL | grep -Eo $MC_VERSION_REGEX | sort -r | head -1)
-
 # Starts the PaperMC Java job with the specified build
 server_starter() {
         handler "INFO" 0 "Restarting the server wit the $1 build..."
@@ -75,6 +70,28 @@ check_dependency() {
         }
 }
 
+# Get the current local PaperMC, Minecraft, and available PaperMC versions
+get() {
+        
+        case $1 in
+                mc_version)
+                        mc_version=$(curl $PAPER_API_URL | grep -Eo $MC_VERSION_REGEX | sort -r | head -1)
+                        ;;
+                latest_build)
+                        latest_build=$(curl $PAPER_API_URL/versions/$mc_version | grep -Eo $BUILD_NUMBER_REGEX | sort -r | head -1)
+                        ;;
+                current_build)
+                        current_build=$(find $papermc_path -name "paper-$mc_version*" 2> /dev/null | grep -Eow $BUILD_NUMBER_REGEX | sort -r | head -1)
+                        ;;
+        esac
+
+        if [ $? -ne 0 ]
+        then    handler "ERROR" 9 "Couldn't determine '$1'."
+        fi
+
+return 0
+}
+
 # Creates the log file if it doesn't already exist on the specified path
 if [ ! -f $log_file_path ]
 then    echo "[INFO: 0  ($(date))] Created log for the PaperMC updater script." > $log_file_path
@@ -89,6 +106,10 @@ check_dependency "curl"
 check_dependency "tmux"
 check_dependency "java"
 check_dependency "wget"
+
+get "current_build"
+get "latest_build"
+get "mc_version"
 
 # Creates the archive directory to store the previously used PaperMC build if it doesn't already exist
 if [ ! -d $archive ]
@@ -143,3 +164,5 @@ then
 else    handler "INFO" 0 "There were no updates for the server."
 
 fi
+
+return 0
