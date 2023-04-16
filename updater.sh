@@ -16,7 +16,7 @@ BUILD_NUMBER_REGEX="[0-9]{3,4}"
 server_starter() {
         handler "INFO" 0 "Restarting the server with the $1 build..."
         sleep 20
-        tmux send-keys -t $tmuxsession:0 "java -Xmx16G -Xms2G -jar $papermc_path/paper-$mc_version-$2.jar nogui" Enter
+        tmux send-keys -t $tmuxsession:0 "java -Xms2G -Xmx16G -jar $papermc_path/paper-$mc_version-$2.jar nogui" Enter
 }
 
 # Sends a stop signal to the running Java job through Tmux
@@ -63,14 +63,20 @@ echo paper-$mc_version-$current_build.jar
 # Verifies that the values specified for the path/session variables exist
 check_input() {
 
-        if [[ (! -f $1) && (! -d $1) && ($2 != "<tmuxsession>") ]]
-        then    handler "ERROR" 8 "The specified path for $2 does not exist."
-        # The following check doesn't work
-        # elif [[ ($2 == "<tmuxsession>") && ($(tmux has-session -t $1) != 0) ]]
-        # then    handler "ERROR" 8 "The specified tmux session '"$1"' does not exist."
-        fi
+    if [[ (! -f $1) && (! -d $1) && ($2 != "<tmuxsession>") ]]
+    then        handler "ERROR" 8 "The specified path for $2 does not exist."
+    elif [[ $2 == "<tmuxsession>" ]]
+    then
+                tmux has-session -t $1 2>/dev/null
+
+                if [[ $? -ne 0 ]]
+                then    handler "ERROR" 8 "The specified tmux session '"$1"' does not exist."
+                fi
+                
+    fi
 
 }
+
 
 # Verifies that the required packages are present in the system
 check_dependency() {
