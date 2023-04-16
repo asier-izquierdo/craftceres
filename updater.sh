@@ -39,12 +39,14 @@ handler() {
 
         # Restart the server with the previously used PaperMC build if there has been an error other than 3, 2, or
         # if it has been correctly executed (0)
-        if [[ ($report_code != 0) && ($report_code != 2) && ($report_code != 3) && ($report_code != 7) && ($report_code != 8) ]]
+        if [[ ($report_code != 0) && ($report_code != 1) && ($report_code != 2) && ($report_code != 3) && ($report_code != 7) && ($report_code != 8) ]]
         then
+echo 'entered conditional 1'
+echo paper-$mc_version-$current_build.jar
 
                 # If the previously used PaperMC build has been archived, move it back
-                if [ ! -f $papermc_path/$current_build ]
-                then mv $archive/$current_build $papermc_path
+                if [[ (! -f $papermc_path/paper-$mc_version-$current_build.jar) && (-f $archive/paper-$mc_version-$current_build.jar) ]]
+                then    mv $archive/paper-$mc_version-$current_build.jar $papermc_path
                 fi
 
                 server_starter "previous" $current_build
@@ -61,8 +63,11 @@ handler() {
 # Verifies that the values specified for the path/session variables exist
 check_input() {
 
-        if [ ! -f $1 -a ! -d $1 ]
+        if [[ (! -f $1) && (! -d $1) && ($2 != "<tmuxsession>") ]]
         then    handler "ERROR" 8 "The specified path for $2 does not exist."
+        # The following check doesn't work
+        # elif [[ ($2 == "<tmuxsession>") && ($(tmux has-session -t $1) != 0) ]]
+        # then    handler "ERROR" 8 "The specified tmux session '"$1"' does not exist."
         fi
 
 }
@@ -79,21 +84,31 @@ get() {
 
         case $1 in
                 mc_version)
-                        mc_version=$(curl $PAPER_API_URL | grep -Eo $MC_VERSION_REGEX | sort -r | head -1)
+                        mc_version=$(curl -s $PAPER_API_URL | grep -Eo $MC_VERSION_REGEX | sort -r | head -1)
                         ;;
                 latest_build)
-                        latest_build=$(curl $PAPER_API_URL/versions/$mc_version | grep -Eo $BUILD_NUMBER_REGEX | sort -r | head -1)
+                        latest_build=$(curl -s $PAPER_API_URL/versions/$mc_version | grep -Eo "$BUILD_NUMBER_REGEX" | sort -r | head -1)
                         ;;
                 current_build)
                         current_build=$(find $papermc_path -name "paper-$mc_version*" 2> /dev/null | grep -Eow $BUILD_NUMBER_REGEX | sort -r | head -1)
                         ;;
         esac
 
-        if [ $? -ne 0 -o -z "$1" ]
+        if [[ ($? != 0) || (-z "$$1") ]]
         then    handler "ERROR" 9 "Couldn't determine '$1'."
         fi
 
 return 0
+}
+
+download_latest_build() {
+        wget https://api.papermc.io/v2/projects/paper/versions/$mc_version/builds/$latest_build/downloads/paper-$mc_version-$latest_build.jar -P $papermc_path
+
+        if [ $? -ne 0 ]
+        then    handler "ERROR" 5 "The latest PaperMC build could not be downloaded."
+        else    mv $papermc_path/paper-$mc_version-$current_build.jar $archive
+        fi
+
 }
 
 # Creates the log file if it doesn't already exist on the specified path
@@ -105,6 +120,7 @@ handler "INFO" 0 "Starting updater execution..."
 
 check_input $papermc_path "<papermc_path>"
 check_input $log_file_path "<log_file_path>"
+check_input $tmuxsession "<tmuxsession>"
 
 check_dependency "curl"
 check_dependency "tmux"
@@ -137,20 +153,14 @@ then
                 server_stopper
 
                 # Uses `check` to check, since using `$?` could lead to false positives
-                if [ -z "$(pidof java)" ]
-                then
-                        wget https://api.papermc.io/v2/projects/paper/versions/$mc_version/builds/$latest_build/downloads/paper-$mc_version-$latest_build.jar -P $papermc_path
-
-                        if [ $? -ne 0 ]
-                        then    handler "ERROR" 5 "The latest PaperMC build could not be downloaded."
-                        else    mv $current_build $archive
-                        fi
-
-                else    handler "ERROR" 3 "The server failed to stop."
+                if [ -n "$(pidof java)" ]
+                then    handler "ERROR" 3 "The server failed to stop."
                 fi
 
-        else    handler "WARNING" 1 "The PaperMC server was not running." >> $log_file_path
+        else    handler "WARNING" 1 "The PaperMC server was not running."
         fi
+
+        download_latest_build
 
         if [ -f $papermc_path/paper-$mc_version-$latest_build.jar ]
         then
@@ -168,5 +178,3 @@ then
 else    handler "INFO" 0 "There were no updates for the server."
 
 fi
-
-return 0
