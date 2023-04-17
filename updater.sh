@@ -106,7 +106,7 @@ return 0
 }
 
 download_latest_build() {
-        wget https://api.papermc.io/v2/projects/paper/versions/$mc_version/builds/$latest_build/downloads/paper-$mc_version-$latest_build.jar -P $papermc_path
+        wget -q https://api.papermc.io/v2/projects/paper/versions/$mc_version/builds/$latest_build/downloads/paper-$mc_version-$latest_build.jar -P $papermc_path
 
         if [ $? -ne 0 ]
         then    handler "ERROR" 5 "The latest PaperMC build could not be downloaded."
