@@ -27,35 +27,59 @@ server_stopper() {
 
 # Handles errors and warnings, acting accordingly
 handler() {
-        local report_type=$1
-        local report_code=$2
-        local report_message=$3
+    local report_type=$1
+    local report_code=$2
+    local report_message=$3
+    local timestamp=$(date +"%Y-%m-%d | %H:%M:%S")
 
-        # Verbose progress and errors instead of logging them if the execution is manual instead of a cron job
-        if [ -n "$TERM" ]
-        then    echo "[$report_type: $report_code] ($(date))  $report_message"
-        else    echo "[$report_type: $report_code] ($(date))  $report_message" >> $log_file_path
+    # ANSI escape codes for colors
+    RED='\033[0;31m'
+    YELLOW='\033[1;33m'
+    GREEN='\033[0;32m'
+    NC='\033[0m' # No color
+
+    case $report_type in
+        "ERROR")
+            color=$RED
+            ;;
+        "WARNING")
+            color=$YELLOW
+            ;;
+        "LOG")
+            color=$GREEN
+            ;;
+        *)
+            color=$NC
+            ;;
+    esac
+
+    log_entry="[$timestamp] ${color}$report_type: $report_code > $report_message${NC}"
+
+    # Verbose progress and errors instead of logging them if the execution is manual instead of a cron job
+    if [ -n "$TERM" ]
+    then    echo -e "$log_entry"
+    else    echo -e "$log_entry" >> $log_file_path
+    fi
+
+    # Restart the server with the previously used PaperMC build if there has been an error other than 3, 2, or
+    # if it has been correctly executed (0)
+    if [[ ($report_code != 0) && ($report_code != 1) && ($report_code != 2) && ($report_code != 3) && ($report_code != 7) && ($report_code != 8) ]]
+    then
+    
+        # If the previously used PaperMC build has been archived, move it back
+        if [[ (! -f $papermc_path/paper-$mc_version-$current_build.jar) && (-f $archive/paper-$mc_version-$current_build.jar) ]]
+        then    mv $archive/paper-$mc_version-$current_build.jar $papermc_path
         fi
 
-        # Restart the server with the previously used PaperMC build if there has been an error other than 3, 2, or
-        # if it has been correctly executed (0)
-        if [[ ($report_code != 0) && ($report_code != 1) && ($report_code != 2) && ($report_code != 3) && ($report_code != 7) && ($report_code != 8) ]]
-        then
+        server_starter "previous" $current_build
+    fi
 
-                # If the previously used PaperMC build has been archived, move it back
-                if [[ (! -f $papermc_path/paper-$mc_version-$current_build.jar) && (-f $archive/paper-$mc_version-$current_build.jar) ]]
-                then    mv $archive/paper-$mc_version-$current_build.jar $papermc_path
-                fi
-
-                server_starter "previous" $current_build
-        fi
-
-        # Exit the script only if the call was for an error
-        if [[ $report_type == "ERROR" ]]
-        then    exit $report_code
-        else    return $report_code
-        fi
-
+    # Exit the script only if the call was for an error
+    if [[ $report_type == "ERROR" ]]
+    then    exit $report_code
+    else    return $report_code
+    fi
+    
 }
 
 # Verifies that the values specified for the path/session variables exist
