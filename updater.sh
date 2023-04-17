@@ -91,7 +91,7 @@ get() {
                         mc_version=$(curl -s $PAPER_API_URL | grep -Eo $MC_VERSION_REGEX | sort -r | head -1)
                         ;;
                 latest_build)
-                        latest_build=$(curl -s $PAPER_API_URL/versions/$mc_version | grep -Eo "$BUILD_NUMBER_REGEX" | sort -r | head -1)
+                        latest_build=$(curl -s "$PAPER_API_URL/versions/$mc_version" | grep -Eo "$BUILD_NUMBER_REGEX" | sort -r | head -1)
                         ;;
                 current_build)
                         current_build=$(find $papermc_path -name "paper-$mc_version*" 2> /dev/null | grep -Eow $BUILD_NUMBER_REGEX | sort -r | head -1)
@@ -106,7 +106,7 @@ return 0
 }
 
 download_latest_build() {
-        wget -q https://api.papermc.io/v2/projects/paper/versions/$mc_version/builds/$latest_build/downloads/paper-$mc_version-$latest_build.jar -P $papermc_path
+        wget -q "https://api.papermc.io/v2/projects/paper/versions/$mc_version/builds/$latest_build/downloads/paper-$mc_version-$latest_build.jar" -P $papermc_path
 
         if [ $? -ne 0 ]
         then    handler "ERROR" 5 "The latest PaperMC build could not be downloaded."
