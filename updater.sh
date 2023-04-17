@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Modify these variables with the corresponding values (do not use "/" after a directory)
-papermc_path="<path to the papermc.jar parent diretory>"
+papermc_path="<path to the papermc.jar parent directory>"
 log_file_path="<log file path>"
 tmuxsession="<name of the tmux session where papermc is running>"
 
