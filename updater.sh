@@ -134,7 +134,19 @@ download_latest_build() {
 
         if [ $? -ne 0 ]
         then    handler "ERROR" 5 "The latest PaperMC build could not be downloaded."
-        else    mv $papermc_path/paper-$mc_version-$current_build.jar $archive
+        else
+        
+                if [ -n "$current_build" ]
+                then
+                        mv $papermc_path/paper-$mc_version-$current_build.jar $archive
+                        
+                        if [ $? -eq 0 ]
+                        then    handler "INFO" 0 "Successfully moved the previous build to the archive."
+                        else    handler "WARNING" 9 "Could not move the previous build to the archive"
+                        fi
+                        
+                fi
+                
         fi
 
 }
