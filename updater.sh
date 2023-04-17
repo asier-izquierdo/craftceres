@@ -70,7 +70,7 @@ check_input() {
                 if [[ $? -ne 0 ]]
                 then    handler "ERROR" 8 "The specified tmux session '"$1"' does not exist."
                 fi
-                
+
     fi
 
 }
@@ -122,14 +122,14 @@ fi
 
 handler "INFO" 0 "Starting updater execution..."
 
-check_input $papermc_path "<papermc_path>"
-check_input $log_file_path "<log_file_path>"
-check_input $tmuxsession "<tmuxsession>"
-
 check_dependency "curl"
 check_dependency "tmux"
 check_dependency "java"
 check_dependency "wget"
+
+check_input $papermc_path "<papermc_path>"
+check_input $log_file_path "<log_file_path>"
+check_input $tmuxsession "<tmuxsession>"
 
 get "current_build"
 get "latest_build"
@@ -140,7 +140,7 @@ if [ ! -d $archive ]
 then
         handler "INFO" 0 "No archives directory found. Creating it..."
 
-        mkdir $archive 
+        mkdir $archive
 
         if [ $? -ne 0 ]
         then    handler "ERROR" 2 "Could not create the archives directory. It is necessary for archiving previously working .jars in a tidied manener."
