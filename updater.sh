@@ -6,10 +6,10 @@ log_file_path="<log file path>"
 tmuxsession="<name of the tmux session where papermc is running>"
 
 # Constants
-archive=$papermc_path/archive
 PAPER_API_URL="https://api.papermc.io/v2/projects/paper"
 MC_VERSION_REGEX="1\.[0-9]{2}\.[0-9]"
 BUILD_NUMBER_REGEX="[0-9]{3,4}"
+ARCHIVE=$papermc_path/archive
 
 # Starts the PaperMC Java job with the specified build
 server_starter() {
@@ -67,8 +67,8 @@ handler() {
     then
     
         # If the previously used PaperMC build has been archived, move it back
-        if [[ (! -f $papermc_path/paper-$mc_version-$current_build.jar) && (-f $archive/paper-$mc_version-$current_build.jar) ]]
-        then    mv $archive/paper-$mc_version-$current_build.jar $papermc_path
+        if [[ (! -f $papermc_path/paper-$mc_version-$current_build.jar) && (-f $ARCHIVE/paper-$mc_version-$current_build.jar) ]]
+        then    mv $ARCHIVE/paper-$mc_version-$current_build.jar $papermc_path
         fi
 
         server_starter "previous" $current_build
@@ -138,7 +138,7 @@ download_latest_build() {
         
                 if [ -n "$current_build" ]
                 then
-                        mv $papermc_path/paper-$mc_version-$current_build.jar $archive
+                        mv $papermc_path/paper-$mc_version-$current_build.jar $ARCHIVE
                         
                         if [ $? -eq 0 ]
                         then    handler "INFO" 0 "Successfully moved the previous build to the archive."
@@ -172,11 +172,11 @@ get "latest_build"
 get "current_build"
 
 # Creates the archive directory to store the previously used PaperMC build if it doesn't already exist
-if [ ! -d $archive ]
+if [ ! -d $ARCHIVE ]
 then
-        handler "INFO" 0 "No archives directory found. Creating it..."
+        handler "INFO" 0 "No archive directory found. Creating it..."
 
-        mkdir $archive
+        mkdir $ARCHIVE
 
         if [ $? -ne 0 ]
         then    handler "ERROR" 6 "Could not create the archives directory. It is necessary for archiving previously working .jars in a tidied manener."
