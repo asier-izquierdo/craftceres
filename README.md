@@ -15,7 +15,7 @@ Designed to update _any_ PaperMC server setup. It should be run with `sudo` unle
 
 ### Limitations
 
-- It doesn't currently delete previous builds of PaperMC.
+- It doesn't currently delete previously archived builds of PaperMC.
 
 ## backer.sh
 
@@ -26,6 +26,7 @@ Should be run with `sudo`, too.
 ### Limitations
 
 - It doesn't currently back up Dynmap's MySQL database.
+- In fact, it doesn't currently work neither has it been tested, just here for version control.
 
 ## reverse-proxy.conf
 
