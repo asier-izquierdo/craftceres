@@ -45,7 +45,7 @@ handler() {
         "WARNING")
             color=$YELLOW
             ;;
-        "LOG")
+        "INFO")
             color=$GREEN
             ;;
         *)
