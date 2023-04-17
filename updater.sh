@@ -131,9 +131,9 @@ check_input $papermc_path "<papermc_path>"
 check_input $log_file_path "<log_file_path>"
 check_input $tmuxsession "<tmuxsession>"
 
-get "current_build"
-get "latest_build"
 get "mc_version"
+get "latest_build"
+get "current_build"
 
 # Creates the archive directory to store the previously used PaperMC build if it doesn't already exist
 if [ ! -d $archive ]
