@@ -122,7 +122,7 @@ get() {
                         ;;
         esac
 
-        if [[ ($? != 0) || (-z "$$1") ]]
+        if [[ ($? != 0) || (-z "$1") ]]
         then    handler "ERROR" 9 "Couldn't determine '$1'."
         fi
 
