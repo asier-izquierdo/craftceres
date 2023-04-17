@@ -86,13 +86,13 @@ handler() {
 check_input() {
 
     if [[ (! -f $1) && (! -d $1) && ($2 != "<tmuxsession>") ]]
-    then        handler "ERROR" 8 "The specified path for $2 does not exist."
+    then        handler "ERROR" 1 "The specified path for $2 does not exist."
     elif [[ $2 == "<tmuxsession>" ]]
     then
                 tmux has-session -t $1 2>/dev/null
 
                 if [[ $? -ne 0 ]]
-                then    handler "ERROR" 8 "The specified tmux session '"$1"' does not exist."
+                then    handler "ERROR" 2 "The specified tmux session '"$1"' does not exist."
                 fi
 
     fi
@@ -103,7 +103,7 @@ check_input() {
 # Verifies that the required packages are present in the system
 check_dependency() {
         command -v "$1" >/dev/null 2>&1 || {
-                handler "ERROR" 7 "Missing dependency <$1>."
+                handler "ERROR" 3 "Missing dependency <$1>."
         }
 }
 
@@ -123,7 +123,7 @@ get() {
         esac
 
         if [[ ($? != 0) || (-z "$1") ]]
-        then    handler "ERROR" 9 "Couldn't determine '$1'."
+        then    handler "ERROR" 4 "Couldn't determine '$1'."
         fi
 
 return 0
@@ -142,7 +142,7 @@ download_latest_build() {
                         
                         if [ $? -eq 0 ]
                         then    handler "INFO" 0 "Successfully moved the previous build to the archive."
-                        else    handler "WARNING" 10 "Could not move the previous build to the archive"
+                        else    handler "WARNING" 11 "Could not move the previous build to the archive"
                         fi
                         
                 fi
@@ -179,7 +179,7 @@ then
         mkdir $archive
 
         if [ $? -ne 0 ]
-        then    handler "ERROR" 2 "Could not create the archives directory. It is necessary for archiving previously working .jars in a tidied manener."
+        then    handler "ERROR" 6 "Could not create the archives directory. It is necessary for archiving previously working .jars in a tidied manener."
         else    handler "INFO" 0 "Created directory for archiving the latest working PaperMC .jar"
         fi
 
@@ -194,10 +194,10 @@ then
 
                 # Uses `check` to check, since using `$?` could lead to false positives
                 if [ -n "$(pidof java)" ]
-                then    handler "ERROR" 3 "The server failed to stop."
+                then    handler "ERROR" 7 "The server failed to stop."
                 fi
 
-        else    handler "WARNING" 1 "The PaperMC server was not running."
+        else    handler "WARNING" 10 "The PaperMC server was not running."
         fi
 
         download_latest_build
@@ -207,10 +207,10 @@ then
                 server_starter "latest" $latest_build
 
                 if [ -z "$(pidof java)" ]
-                then    handler "ERROR" 6 "The server failed to start using the latest PaperMC build."
+                then    handler "ERROR" 8 "The server failed to start using the latest PaperMC build."
                 fi
 
-        else    handler "ERROR" 4 "The latest PaperMC version could not be found."
+        else    handler "ERROR" 9 "The latest PaperMC version could not be found."
         fi
 
         handler "INFO" 0 "The PaperMC server has successfully been updated and restarted."
