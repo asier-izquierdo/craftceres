@@ -41,8 +41,6 @@ handler() {
         # if it has been correctly executed (0)
         if [[ ($report_code != 0) && ($report_code != 1) && ($report_code != 2) && ($report_code != 3) && ($report_code != 7) && ($report_code != 8) ]]
         then
-echo 'entered conditional 1'
-echo paper-$mc_version-$current_build.jar
 
                 # If the previously used PaperMC build has been archived, move it back
                 if [[ (! -f $papermc_path/paper-$mc_version-$current_build.jar) && (-f $archive/paper-$mc_version-$current_build.jar) ]]
