@@ -15,8 +15,9 @@ ARCHIVE=$papermc_path/archive
 server_starter() {
         handler "INFO" 0 "Starting the server with the $1 build..."
         sleep 20
-        tmux send-keys -t $tmuxsession:0 -C "$papermc_path" "java -Xms2G -Xmx16G -jar $papermc_path/paper-$mc_version-$2.jar nogui" Enter
+        tmux send-keys -t $tmuxsession:0 "(cd $papermc_path && java -Xms2G -Xmx16G -jar $papermc_path/paper-$mc_version-$2.jar nogui)" Enter
 }
+
 
 # Sends a stop signal to the running Java job through Tmux
 server_stopper() {
@@ -25,20 +26,16 @@ server_stopper() {
         sleep 20
 }
 
-# Handles errors and warnings, acting accordingly
-handler() {
-    local report_type=$1
-    local report_code=$2
-    local report_message=$3
-    local timestamp=$(date +"%Y-%m-%d | %H:%M:%S")
+log_entry() {
+        local timestamp=$(date +"%Y-%m-%d | %H:%M:%S")
 
-    # ANSI escape codes for colors
-    RED='\033[0;31m'
-    YELLOW='\033[1;33m'
-    GREEN='\033[0;32m'
-    NC='\033[0m' # No color
+        # ANSI escape codes for colors
+        RED='\033[0;31m'
+        YELLOW='\033[1;33m'
+        GREEN='\033[0;32m'
+        NC='\033[0m' # No color
 
-    case $report_type in
+        case $1 in
         "ERROR")
             color=$RED
             ;;
@@ -51,15 +48,30 @@ handler() {
         *)
             color=$NC
             ;;
-    esac
+        esac
 
-    log_entry="[$timestamp] ${color}$report_type: $report_code > $report_message${NC}"
+        entry="[$timestamp] ${color}$1: $2 > $3${NC}"
 
-    # Verbose progress and errors instead of logging them if the execution is manual instead of a cron job
-    if [ -n "$TERM" ]
-    then    echo -e "$log_entry"
-    else    echo -e "$log_entry" >> $log_file_path
-    fi
+        # Creates the log file if it doesn't already exist on the specified path
+        if [ ! -f $log_file_path ]
+        then    echo "[$timestamp] INFO: 0 > Created log for the PaperMC updater script." > $log_file_path
+        fi
+        
+        # Verbose progress and errors instead of logging them if the execution is manual instead of a cron job
+        if [ -n "$TERM" ]
+        then    echo -e "$entry"
+        else    echo -e "$entry" >> $log_file_path
+        fi
+
+}
+
+# Handles errors and warnings, acting accordingly
+handler() {
+    local report_type=$1
+    local report_code=$2
+    local report_message=$3
+
+    log_entry "$report_type" "$report_code" "$report_message"
 
     # Restart the server with the previously used PaperMC build if there has been an error other than 3, 2, or
     # if it has been correctly executed (0)
@@ -122,7 +134,7 @@ get() {
                         ;;
         esac
 
-        if [[ ($? != 0) || (-z "$1") ]]
+        if [[ ($? != 0) || (-z "$$1") ]]
         then    handler "ERROR" 4 "Couldn't determine '$1'."
         fi
 
@@ -150,11 +162,6 @@ download_latest_build() {
         fi
 
 }
-
-# Creates the log file if it doesn't already exist on the specified path
-if [ ! -f $log_file_path ]
-then    echo "[INFO: 0] ($(date))  Created log for the PaperMC updater script." > $log_file_path
-fi
 
 handler "INFO" 0 "Starting updater execution..."
 
