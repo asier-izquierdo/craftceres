@@ -15,7 +15,7 @@ BUILD_NUMBER_REGEX="[0-9]{3,4}"
 server_starter() {
         handler "INFO" 0 "Starting the server with the $1 build..."
         sleep 20
-        tmux send-keys -t $tmuxsession:0 "java -Xms2G -Xmx16G -jar $papermc_path/paper-$mc_version-$2.jar nogui" Enter
+        tmux send-keys -t $tmuxsession:0 -C "$papermc_path" "java -Xms2G -Xmx16G -jar $papermc_path/paper-$mc_version-$2.jar nogui" Enter
 }
 
 # Sends a stop signal to the running Java job through Tmux
