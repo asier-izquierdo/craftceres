@@ -21,6 +21,7 @@ server_starter() {
 
 # Sends a stop signal to the running Java job through Tmux
 server_stopper() {
+        handler "INFO" 0 "Stopping the server..."
         tmux send-keys -t $tmuxsession:0 "stop" Enter
         sleep 20
 }
