@@ -5,9 +5,8 @@ papermc_path="<path to the papermc.jar parent diretory>"
 log_file_path="<log file path>"
 tmuxsession="<name of the tmux session where papermc is running>"
 
-archive=$papermc_path/archive
-
 # Constants
+archive=$papermc_path/archive
 PAPER_API_URL="https://api.papermc.io/v2/projects/paper"
 MC_VERSION_REGEX="1\.[0-9]{2}\.[0-9]"
 BUILD_NUMBER_REGEX="[0-9]{3,4}"
