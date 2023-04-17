@@ -142,7 +142,7 @@ download_latest_build() {
                         
                         if [ $? -eq 0 ]
                         then    handler "INFO" 0 "Successfully moved the previous build to the archive."
-                        else    handler "WARNING" 9 "Could not move the previous build to the archive"
+                        else    handler "WARNING" 10 "Could not move the previous build to the archive"
                         fi
                         
                 fi
