@@ -13,7 +13,7 @@ BUILD_NUMBER_REGEX="[0-9]{3,4}"
 
 # Starts the PaperMC Java job with the specified build
 server_starter() {
-        handler "INFO" 0 "Restarting the server with the $1 build..."
+        handler "INFO" 0 "Starting the server with the $1 build..."
         sleep 20
         tmux send-keys -t $tmuxsession:0 "java -Xms2G -Xmx16G -jar $papermc_path/paper-$mc_version-$2.jar nogui" Enter
 }
