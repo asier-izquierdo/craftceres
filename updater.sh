@@ -6,7 +6,8 @@ log_file_path="<log file path>"
 tmux_session_name="<name of the tmux session where papermc is running>"
 tmux_session_path="<path to the tmux session location>" # Usually '/tmp/tmux-<UUID_of_the_invoker>/default'
 
-# Constants
+# Constants, ordered by likeliness of change
+LATEST_BUILD_LINK="https://api.papermc.io/v2/projects/paper/versions/$mc_version/builds/$latest_build/downloads/paper-$mc_version-$latest_build.jar"
 PAPER_API_URL="https://api.papermc.io/v2/projects/paper"
 MC_VERSION_REGEX="1\.[0-9]{2}\.[0-9]"
 BUILD_NUMBER_REGEX="[0-9]{3,4}"
@@ -144,7 +145,7 @@ return 0
 
 # Fetches the latest build and archives the previos one
 download_latest_build() {
-        wget -q "https://api.papermc.io/v2/projects/paper/versions/$mc_version/builds/$latest_build/downloads/paper-$mc_version-$latest_build.jar" -P $papermc_path
+        wget -q $LATEST_BUILD_LINK -P $papermc_path
 
         if [ $? -ne 0 ]
         then    handler "ERROR" 5 "The latest PaperMC build could not be downloaded."
