@@ -13,10 +13,6 @@ __The updater script is in charge of updating the server with the latest PaperMC
 Currently supports Minecraft updates only up to version 1.99.9<br>
 Designed to update _any_ PaperMC server setup. It should be run with `sudo` unless set as a cron job, since PaperMC is (or should be) run by an user with limited permissions.
 
-### Limitations
-
-- It doesn't currently delete previously archived builds of PaperMC.
-
 ## backer.sh
 
 __The backer script is (_or should be_) in charge of backing up both the world and the Dynmap's MySQL database to an external storage.__
