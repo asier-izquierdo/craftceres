@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # Modify these variables with the corresponding values (do not use "/" after a directory)
-papermc_path="<path to the papermc.jar parent diretory>"
 log_file_path="<log file path>"
+papermc_path="<path to the papermc.jar parent diretory>"
 tmuxsession="<name of the tmux session where papermc is running>"
+session_path="<path to the tmux session location>" # Usually '/tmp/tmux-<UUID_of_the_invoker>/default'
 
 # Constants
 PAPER_API_URL="https://api.papermc.io/v2/projects/paper"
@@ -15,14 +16,14 @@ ARCHIVE=$papermc_path/archive
 server_starter() {
         handler "INFO" 0 "Starting the server with the $1 build..."
         sleep 20
-        tmux -S /tmp/tmux-1000/default send-keys -t $tmuxsession:0 "(cd $papermc_path && java -Xms2G -Xmx16G -jar $papermc_path/paper-$mc_version-$2.jar nogui)" Enter
+        tmux -S $session_path send-keys -t $tmuxsession:0 "(cd $papermc_path && java -Xms2G -Xmx16G -jar $papermc_path/paper-$mc_version-$2.jar nogui)" Enter
 }
 
 
 # Sends a stop signal to the running Java job through Tmux
 server_stopper() {
         handler "INFO" 0 "Stopping the server..."
-        tmux -S /tmp/tmux-1000/default send-keys -t $tmuxsession:0 "stop" Enter
+        tmux -S $session_path send-keys -t $tmuxsession:0 "stop" Enter
         sleep 20
 }
 
@@ -101,7 +102,7 @@ check_input() {
     then        handler "ERROR" 1 "The specified path for $2 does not exist."
     elif [[ $2 == "<tmuxsession>" ]]
     then
-                tmux -S /tmp/tmux-1000/default has-session -t $1 2>/dev/null
+                tmux -S $session_path has-session -t $1 2>/dev/null
 
                 if [ $? -ne 0 ]
                 then    handler "ERROR" 2 "The specified tmux session '"$1"' does not exist."
