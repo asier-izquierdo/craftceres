@@ -1,9 +1,9 @@
 #!/bin/bash
 
 # Modify these variables with the corresponding values (do not use "/" after a directory)
-papermc_path="/home/admincc"
-log_file_path="/home/opc/updater.log"
-tmuxsession="papermc"
+papermc_path="<path to the papermc.jar parent diretory>"
+log_file_path="<log file path>"
+tmuxsession="<name of the tmux session where papermc is running>"
 
 # Constants
 PAPER_API_URL="https://api.papermc.io/v2/projects/paper"
