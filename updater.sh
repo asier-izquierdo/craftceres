@@ -166,6 +166,26 @@ download_latest_build() {
 
 }
 
+# The build that was archived in the previous execution (if any) is deleted to not clutter the archive
+unclutterer() {
+        local oldest=$(ls -t $ARCHIVE | grep 'paper-*' | tail -1)
+        local newest=$(ls -t $ARCHIVE | grep 'paper-*' | head -1)
+        local oldest_num=$(echo $oldest| grep -oE "[0-9]{3,4}" | head -1)
+        local newest_num=$(echo $newest| grep -oE "[0-9]{3,4}" | head -1)
+        
+        if [ $oldest_num -lt $newest_num ]
+        then
+                rm $oldest
+
+                if [ $? -eq 0 ]
+                then    handler "INFO" 0 "Successfully removed the older build '$oldest' from the archive."
+                else    handler "WARNING" 12 "Could not remove the older build '$oldest' from the archive."
+                fi
+        
+        fi
+
+}
+
 handler "INFO" 0 "Starting updater execution..."
 
 check_dependency "curl"
@@ -224,6 +244,8 @@ then
         fi
 
         handler "INFO" 0 "The PaperMC server has successfully been updated and restarted."
+
+        unclutterer
 
 else    handler "INFO" 0 "There were no updates for the server."
 
