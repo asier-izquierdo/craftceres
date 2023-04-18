@@ -121,17 +121,20 @@ check_dependency() {
         }
 }
 
-# Get the current local PaperMC, Minecraft, and available PaperMC versions
+# Gets the current local PaperMC, Minecraft, and available PaperMC versions
 get() {
 
         case $1 in
                 mc_version)
+                        handler "INFO" 0 "Fetching current Minecraft version..."
                         mc_version=$(curl -s $PAPER_API_URL | grep -Eo $MC_VERSION_REGEX | sort -r | head -1)
                         ;;
                 latest_build)
+                        handler "INFO" 0 "Fetching latest available PaperMC build..."
                         latest_build=$(curl -s "$PAPER_API_URL/versions/$mc_version" | grep -Eo "$BUILD_NUMBER_REGEX" | sort -r | head -1)
                         ;;
                 current_build)
+                        handler "INFO" 0 "Checking currently used PaperMC build..."
                         current_build=$(find $papermc_path -name "paper-$mc_version*" 2> /dev/null | grep -Eow $BUILD_NUMBER_REGEX | sort -r | head -1)
                         ;;
         esac
@@ -143,8 +146,10 @@ get() {
 return 0
 }
 
-# Fetches the latest build and archives the previos one
+# Fetches the latest build and archives the previous one
 download_latest_build() {
+        handler "INFO" 0 "Downloading the latest PaperMC build..."
+
         wget -q $LATEST_BUILD_LINK -P $papermc_path
 
         if [ $? -ne 0 ]
@@ -153,11 +158,13 @@ download_latest_build() {
         
                 if [ -n "$current_build" ]
                 then
+                        handler "INFO" 0 "Archiving previous build..."
+
                         mv $papermc_path/paper-$mc_version-$current_build.jar $ARCHIVE
                         
                         if [ $? -eq 0 ]
                         then    handler "INFO" 0 "Successfully moved the previous build to the archive."
-                        else    handler "WARNING" 11 "Could not move the previous build to the archive"
+                        else    handler "WARNING" 11 "Could not move the previous build to the archive."
                         fi
                         
                 fi
@@ -168,25 +175,37 @@ download_latest_build() {
 
 # The build that was archived in the previous execution (if any) is deleted to not clutter the archive
 unclutterer() {
-        local oldest=$(ls -t $ARCHIVE | grep 'paper-*' | tail -1)
-        local newest=$(ls -t $ARCHIVE | grep 'paper-*' | head -1)
-        local oldest_num=$(echo $oldest| grep -oE "[0-9]{3,4}" | head -1)
-        local newest_num=$(echo $newest| grep -oE "[0-9]{3,4}" | head -1)
-        
-        if [ $oldest_num -lt $newest_num ]
-        then
-                rm $oldest
+        handler "INFO" 0 "Checking if there is any surplus on the archive..."
 
-                if [ $? -eq 0 ]
-                then    handler "INFO" 0 "Successfully removed the older build '$oldest' from the archive."
-                else    handler "WARNING" 12 "Could not remove the older build '$oldest' from the archive."
+        local count=$(ls -l $ARCHIVE | wc -l)
+
+        if [ $count -gt 1 ]
+        then
+                local oldest=$(ls -t $ARCHIVE | grep 'paper-*' | tail -1)
+                local newest=$(ls -t $ARCHIVE | grep 'paper-*' | head -1)
+                local oldest_num=$(echo $oldest| grep -oE "[0-9]{3,4}" | head -1)
+                local newest_num=$(echo $newest| grep -oE "[0-9]{3,4}" | head -1)
+                
+                if [ $oldest_num -lt $newest_num ]
+                then
+                        rm $oldest
+
+                        if [ $? -eq 0 ]
+                        then    handler "INFO" 0 "Successfully removed the older build '$oldest' from the archive."
+                        else    handler "WARNING" 12 "Could not remove the older build '$oldest' from the archive."
+                        fi
+
+                else    handler "WARNING" 13 "There's clutter on the archive, but the version isn't lower than the previously archived one."
+                
                 fi
         
+        else    handler "WARNING" 14 "There was not anything to remove from the archive."
+
         fi
 
 }
 
-handler "INFO" 0 "Starting updater execution..."
+handler "INFO" 0 "Starting the updater execution..."
 
 check_dependency "curl"
 check_dependency "tmux"
@@ -250,3 +269,5 @@ then
 else    handler "INFO" 0 "There were no updates for the server."
 
 fi
+
+handler "INFO" 0 "The script successfully executed. Until next week!"
