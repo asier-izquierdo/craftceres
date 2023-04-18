@@ -1,13 +1,12 @@
 #!/bin/bash
 
 # Modify these variables with the corresponding values (do not use "/" after a directory)
-papermc_path="<path to the papermc.jar parent diretory>"
+papermc_path="<path to the papermc.jar parent directory>"
 log_file_path="<log file path>"
 tmux_session_name="<name of the tmux session where papermc is running>"
-tmux_session_path="<path to the tmux session location>" # Usually '/tmp/tmux-<UUID_of_the_invoker>/default'
+tmux_session_path="<path to the tmux session location>" # Usually '/tmp/tmux-<UID_of_the_invoker>/default'
 
 # Constants, ordered by likeliness of change
-LATEST_BUILD_LINK="https://api.papermc.io/v2/projects/paper/versions/$mc_version/builds/$latest_build/downloads/paper-$mc_version-$latest_build.jar"
 PAPER_API_URL="https://api.papermc.io/v2/projects/paper"
 MC_VERSION_REGEX="1\.[0-9]{2}\.[0-9]"
 BUILD_NUMBER_REGEX="[0-9]{3,4}"
@@ -219,6 +218,7 @@ check_input $tmux_session_name "<tmuxsession>"
 get "mc_version"
 get "latest_build"
 get "current_build"
+LATEST_BUILD_LINK="https://api.papermc.io/v2/projects/paper/versions/$mc_version/builds/$latest_build/downloads/paper-$mc_version-$latest_build.jar"
 
 # Creates the archive directory to store the previously used PaperMC build if it doesn't already exist
 if [ ! -d $ARCHIVE ]
