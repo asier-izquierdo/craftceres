@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # Modify these variables with the corresponding values (do not use "/" after a directory)
-log_file_path="<log file path>"
 papermc_path="<path to the papermc.jar parent diretory>"
-tmuxsession="<name of the tmux session where papermc is running>"
-session_path="<path to the tmux session location>" # Usually '/tmp/tmux-<UUID_of_the_invoker>/default'
+log_file_path="<log file path>"
+tmux_session_name="<name of the tmux session where papermc is running>"
+tmux_session_path="<path to the tmux session location>" # Usually '/tmp/tmux-<UUID_of_the_invoker>/default'
 
 # Constants
 PAPER_API_URL="https://api.papermc.io/v2/projects/paper"
@@ -16,17 +16,18 @@ ARCHIVE=$papermc_path/archive
 server_starter() {
         handler "INFO" 0 "Starting the server with the $1 build..."
         sleep 20
-        tmux -S $session_path send-keys -t $tmuxsession:0 "(cd $papermc_path && java -Xms2G -Xmx16G -jar $papermc_path/paper-$mc_version-$2.jar nogui)" Enter
+        tmux -S $tmux_session_path send-keys -t $tmux_session_name:0 "(cd $papermc_path && java -Xms2G -Xmx16G -jar $papermc_path/paper-$mc_version-$2.jar nogui)" Enter
 }
 
 
 # Sends a stop signal to the running Java job through Tmux
 server_stopper() {
         handler "INFO" 0 "Stopping the server..."
-        tmux -S $session_path send-keys -t $tmuxsession:0 "stop" Enter
+        tmux -S $tmux_session_path send-keys -t $tmux_session_name:0 "stop" Enter
         sleep 20
 }
 
+# Actually records entries to the log, plus colors them to easly differenciate severity
 log_entry() {
         local timestamp=$(date +"%Y-%m-%d | %H:%M:%S")
 
@@ -102,7 +103,7 @@ check_input() {
     then        handler "ERROR" 1 "The specified path for $2 does not exist."
     elif [[ $2 == "<tmuxsession>" ]]
     then
-                tmux -S $session_path has-session -t $1 2>/dev/null
+                tmux -S $tmux_session_path has-session -t $1 2>/dev/null
 
                 if [ $? -ne 0 ]
                 then    handler "ERROR" 2 "The specified tmux session '"$1"' does not exist."
@@ -111,7 +112,6 @@ check_input() {
     fi
 
 }
-
 
 # Verifies that the required packages are present in the system
 check_dependency() {
@@ -142,6 +142,7 @@ get() {
 return 0
 }
 
+# Fetches the latest build and archives the previos one
 download_latest_build() {
         wget -q "https://api.papermc.io/v2/projects/paper/versions/$mc_version/builds/$latest_build/downloads/paper-$mc_version-$latest_build.jar" -P $papermc_path
 
@@ -173,7 +174,7 @@ check_dependency "wget"
 
 check_input $papermc_path "<papermc_path>"
 check_input $log_file_path "<log_file_path>"
-check_input $tmuxsession "<tmuxsession>"
+check_input $tmux_session_name "<tmuxsession>"
 
 get "mc_version"
 get "latest_build"
