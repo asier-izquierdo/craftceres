@@ -92,7 +92,7 @@ log_entry() {
         fi
 
         # Verbose progress and errors instead of logging them if the execution is manual instead of a cron job
-        if [ -n "$TERM" ]
+        if [ -n "$PS1" ]
         then    echo -e "$entry"
         else    echo -e "$entry" >> $log_file_path
         fi
