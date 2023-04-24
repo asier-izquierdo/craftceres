@@ -164,18 +164,18 @@ return 0
 get() {
 
         case $1 in
-                mc_version)
-                        handler "INFO" 0 "Fetching current Minecraft version..."
-                        mc_version=$(curl -s $PAPER_API_URL | grep -Eo $MC_VERSION_REGEX | sort -r | head -1)
-                        ;;
-                latest_build)
-                        handler "INFO" 0 "Fetching latest available PaperMC build..."
-                        latest_build=$(curl -s "$PAPER_API_URL/versions/$mc_version" | grep -Eo "$BUILD_NUMBER_REGEX" | sort -r | head -1)
-                        ;;
-                current_build)
-                        handler "INFO" 0 "Checking currently used PaperMC build..."
-                        current_build=$(find $papermc_path -name "paper-$mc_version*" 2> /dev/null | grep -Eow $BUILD_NUMBER_REGEX | sort -r | head -1)
-                        ;;
+        mc_version)
+                handler "INFO" 0 "Fetching current Minecraft version..."
+                mc_version=$(curl -s $PAPER_API_URL | grep -Eo $MC_VERSION_REGEX | sort -r | head -1)
+                ;;
+        latest_build)
+                handler "INFO" 0 "Fetching latest available PaperMC build..."
+                latest_build=$(curl -s "$PAPER_API_URL/versions/$mc_version" | grep -Eo "$BUILD_NUMBER_REGEX" | sort -r | head -1)
+                ;;
+        current_build)
+                handler "INFO" 0 "Checking currently used PaperMC build..."
+                current_build=$(find $papermc_path -name "paper-$mc_version*" 2> /dev/null | grep -Eow $BUILD_NUMBER_REGEX | sort -r | head -1)
+                ;;
         esac
 
         if [[ ($? != 0) || (-z "$$1") ]]
