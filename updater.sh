@@ -24,12 +24,12 @@ reporter() {
         then
 
                 case $1 in
-                        OK)
-                                local script_result=$(echo "The script successfully finished!")
-                                ;;
-                        NOT)
-                                local script_result=$(echo -e "The script executed, but there's been a problem. Here's the log entry:\n\n$2")
-                                ;;
+                OK)
+                        local script_result=$(echo "The script successfully finished!")
+                        ;;
+                NOT)
+                        local script_result=$(echo -e "The script executed, but there's been a problem. Here's the log entry:\n\n$2")
+                        ;;
                 esac
                 
                 curl -s -X POST "$bot_url" -d chat_id=$chat_id -d text="$script_result"
