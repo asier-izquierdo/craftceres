@@ -269,7 +269,11 @@ then
                 server_starter "latest" $latest_build
 
                 if [ -z "$(pidof java)" ]
-                then    handler "ERROR" 8 "The server failed to start using the latest PaperMC build."
+                then    
+                        # If the server couldn't use the latest build, it removes it before restarting with the previous
+                        # one, in order for another run of the script not to indicate that no updates were found
+                        rm $papermc_path/paper-$mc_version-$latest_build.jar
+                        handler "ERROR" 8 "The server failed to start using the latest PaperMC build."
                 fi
 
         else    handler "ERROR" 9 "The latest PaperMC version could not be found on the system."
