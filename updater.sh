@@ -236,11 +236,9 @@ unclutterer() {
                         fi
 
                 else    handler "WARNING" 13 "There is clutter on the archive, but the version isn't lower than the previously archived one."
- 
                 fi
         
         else    handler "WARNING" 14 "There was not anything to remove from the archive."
-
         fi
 
 return 0
@@ -311,7 +309,6 @@ then
         handler "INFO" 0 "The PaperMC server has successfully been updated and restarted."
         reporter "OK" "and the server has correctly been updated and restarted."
         unclutterer
-
 else
         handler "INFO" 0 "There were no updates for the server."
         reporter "OK" "; however, there were no updates for the server."
