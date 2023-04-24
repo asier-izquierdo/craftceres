@@ -2,7 +2,7 @@
 
 # Modify these variables with the corresponding values (do not use "/" after a directory)
 papermc_path="<path to the papermc.jar parent directory>"
-log_file_path="<log file path>"
+log_file_path="<log file path>" # Include your desired log file name ('/path/name.log')
 tmux_session_name="<name of the tmux session where papermc is running>"
 tmux_session_path="<path to the tmux session location>" # Usually '/tmp/tmux-<UID_of_the_invoker>/default'
 
@@ -17,6 +17,8 @@ server_starter() {
         handler "INFO" 0 "Starting the server with the $1 build..."
         sleep 20
         tmux -S $tmux_session_path send-keys -t $tmux_session_name:0 "(cd $papermc_path && java -Xms2G -Xmx16G -jar $papermc_path/paper-$mc_version-$2.jar nogui)" Enter
+
+return 0
 }
 
 
@@ -25,6 +27,8 @@ server_stopper() {
         handler "INFO" 0 "Stopping the server..."
         tmux -S $tmux_session_path send-keys -t $tmux_session_name:0 "stop" Enter
         sleep 20
+
+return 0
 }
 
 # Actually records entries to the log, plus colors them to easly differenciate severity
@@ -52,6 +56,7 @@ log_entry() {
             ;;
         esac
 
+        # Formats the entry
         entry="[$timestamp] ${color}$1: $2 > $3${NC}"
 
         # Creates the log file if it doesn't already exist on the specified path
@@ -65,6 +70,7 @@ log_entry() {
         else    echo -e "$entry" >> $log_file_path
         fi
 
+return 0
 }
 
 # Handles errors and warnings, acting accordingly
@@ -72,12 +78,12 @@ handler() {
     local report_type=$1
     local report_code=$2
     local report_message=$3
+    # List of the codes that won't lead to a server restart 
     local no_restart_codes=(0 1 2 3 6 7 10 12 14)
 
     log_entry "$report_type" "$report_code" "$report_message"
 
-    # Restart the server with the previously used PaperMC build if there has been an error other than 3, 2, or
-    # if it has been correctly executed (0)
+    # Restart the server with the previously used PaperMC build if there has been an error other than those in the array
     if [[ ! "${$no_restart_codes[@]}" =~ $report_code ]]
     then
     
@@ -94,7 +100,8 @@ handler() {
     then    exit $report_code
     else    return $report_code
     fi
-    
+
+return 0
 }
 
 # Verifies that the values specified for the path/session variables exist
@@ -112,6 +119,7 @@ check_input() {
 
     fi
 
+return 0
 }
 
 # Verifies that the required packages are present in the system
@@ -119,6 +127,8 @@ check_dependency() {
         command -v "$1" >/dev/null 2>&1 || {
                 handler "ERROR" 3 "Missing dependency <$1>."
         }
+
+return 0
 }
 
 # Gets the current local PaperMC, Minecraft, and available PaperMC versions
@@ -171,6 +181,7 @@ download_latest_build() {
                 
         fi
 
+return 0
 }
 
 # The build that was archived in the previous execution (if any) is deleted to not clutter the archive
@@ -203,6 +214,7 @@ unclutterer() {
 
         fi
 
+return 0
 }
 
 handler "INFO" 0 "Starting the updater execution..."
