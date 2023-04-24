@@ -31,7 +31,7 @@ reporter() {
                         local script_result=$(echo -e "The script executed, but there's been a problem. Here's the log entry:\n\n$2")
                         ;;
                 esac
-                
+
                 curl -s -X POST "$bot_url" -d chat_id=$chat_id -d text="$script_result"
         else    handler "WARNING" 15 "The reporter is not enabled. To enable it, please set both <bot_url> and <chat_id>. No notifications were sent."
         fi
@@ -90,7 +90,7 @@ log_entry() {
         if [ ! -f $log_file_path ]
         then    echo "[$timestamp] INFO: 0 > Created log for the PaperMC updater script." > $log_file_path
         fi
-        
+
         # Verbose progress and errors instead of logging them if the execution is manual instead of a cron job
         if [ -n "$TERM" ]
         then    echo -e "$entry"
@@ -107,13 +107,13 @@ handler() {
     local report_message=$3
     # List of the codes that will lead to a server restart 
     local restart_codes=(5 8 9)
-
+    
     log_entry "$report_type" "$report_code" "$report_message"
-
+    
     # Restart the server with the previously used PaperMC build if there has been an error contained in the array
     if [[ "${restart_codes[@]}" =~ $report_code ]]
     then
-    
+
         # If the previously used PaperMC build has been archived, move it back
         if [[ (! -f $papermc_path/paper-$mc_version-$current_build.jar) && (-f $ARCHIVE/paper-$mc_version-$current_build.jar) ]]
         then    mv $ARCHIVE/paper-$mc_version-$current_build.jar $papermc_path
@@ -124,7 +124,7 @@ handler() {
 
     # Exit the script only if the call was for an error
     if [[ $report_type == "ERROR" ]]
-    then    
+    then
             reporter "NOT" "$report_message"
             exit $report_code
     else    return $report_code
@@ -200,14 +200,14 @@ download_latest_build() {
                         handler "INFO" 0 "Archiving previous build..."
 
                         mv $papermc_path/paper-$mc_version-$current_build.jar $ARCHIVE
-                        
+
                         if [ $? -eq 0 ]
                         then    handler "INFO" 0 "Successfully moved the previous build to the archive."
                         else    handler "WARNING" 11 "Could not move the previous build to the archive."
                         fi
-                        
+
                 fi
-                
+
         fi
 
 return 0
@@ -225,7 +225,7 @@ unclutterer() {
                 local newest=$(ls -t $ARCHIVE | grep 'paper-*' | head -1)
                 local oldest_num=$(echo $oldest| grep -oE "[0-9]{3,4}" | head -1)
                 local newest_num=$(echo $newest| grep -oE "[0-9]{3,4}" | head -1)
-                
+
                 if [ $oldest_num -lt $newest_num ]
                 then
                         rm $ARCHIVE/$oldest
@@ -236,7 +236,7 @@ unclutterer() {
                         fi
 
                 else    handler "WARNING" 13 "There is clutter on the archive, but the version isn't lower than the previously archived one."
-                
+ 
                 fi
         
         else    handler "WARNING" 14 "There was not anything to remove from the archive."
@@ -298,7 +298,7 @@ then
                 server_starter "latest" $latest_build
 
                 if [ -z "$(pidof java)" ]
-                then    
+                then
                         # If the server couldn't use the latest build, it removes it before restarting with the previous
                         # one, in order for another run of the script not to indicate that no updates were found
                         rm $papermc_path/paper-$mc_version-$latest_build.jar
