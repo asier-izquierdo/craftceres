@@ -28,7 +28,7 @@ reporter() {
                                 local script_result=$(echo "The script successfully finished!")
                                 ;;
                         NOT)
-                                local script_result=$(echo -E "The script executed, but there's been a problem. Here's the log entry:\n\n$2")
+                                local script_result=$(echo -e "The script executed, but there's been a problem. Here's the log entry:\n\n$2")
                                 ;;
                 esac
                 
