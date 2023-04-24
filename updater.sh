@@ -79,7 +79,7 @@ handler() {
     local report_code=$2
     local report_message=$3
     # List of the codes that won't lead to a server restart 
-    local no_restart_codes=(0 1 2 3 6 7 10 12 14)
+    local no_restart_codes=(0 1 2 3 4 6 7 10 11 12 13 14)
 
     log_entry "$report_type" "$report_code" "$report_message"
 
