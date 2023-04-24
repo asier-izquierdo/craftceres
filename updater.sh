@@ -78,13 +78,13 @@ handler() {
     local report_type=$1
     local report_code=$2
     local report_message=$3
-    # List of the codes that won't lead to a server restart 
-    local no_restart_codes=(0 1 2 3 4 6 7 10 11 12 13 14)
+    # List of the codes that will lead to a server restart 
+    local restart_codes=(5 8 9)
 
     log_entry "$report_type" "$report_code" "$report_message"
 
-    # Restart the server with the previously used PaperMC build if there has been an error other than those in the array
-    if [[ ! "${$no_restart_codes[@]}" =~ $report_code ]]
+    # Restart the server with the previously used PaperMC build if there has been an error contained in the array
+    if [[ "${restart_codes[@]}" =~ $report_code ]]
     then
     
         # If the previously used PaperMC build has been archived, move it back
