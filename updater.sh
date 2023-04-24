@@ -103,7 +103,7 @@ check_input() {
     then        handler "ERROR" 1 "The specified path for $2 does not exist."
     elif [[ $2 == "<tmuxsession>" ]]
     then
-                tmux -S $tmux_session_path has-session -t $1 2>/dev/null
+                tmux -S $tmux_session_path has-session -t $1 2> /dev/null
 
                 if [ $? -ne 0 ]
                 then    handler "ERROR" 2 "The specified tmux session '"$1"' does not exist."
