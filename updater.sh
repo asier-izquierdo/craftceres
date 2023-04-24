@@ -272,7 +272,7 @@ then
                 then    handler "ERROR" 8 "The server failed to start using the latest PaperMC build."
                 fi
 
-        else    handler "ERROR" 9 "The latest PaperMC version could not be found."
+        else    handler "ERROR" 9 "The latest PaperMC version could not be found on the system."
         fi
 
         handler "INFO" 0 "The PaperMC server has successfully been updated and restarted."
