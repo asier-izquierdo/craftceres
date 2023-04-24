@@ -77,7 +77,7 @@ handler() {
 
     # Restart the server with the previously used PaperMC build if there has been an error other than 3, 2, or
     # if it has been correctly executed (0)
-    if [[ ($report_code != 0) && ($report_code != 1) && ($report_code != 2) && ($report_code != 3) && ($report_code != 6) && ($report_code != 7) && ($report_code != 10) ]]
+    if [[ ($report_code != 0) && ($report_code != 1) && ($report_code != 2) && ($report_code != 3) && ($report_code != 6) && ($report_code != 7) && ($report_code != 10) && ($report_code != 12) && ($report_code != 14) ]]
     then
     
         # If the previously used PaperMC build has been archived, move it back
@@ -187,14 +187,14 @@ unclutterer() {
                 
                 if [ $oldest_num -lt $newest_num ]
                 then
-                        rm $oldest
+                        rm $ARCHIVE/$oldest
 
                         if [ $? -eq 0 ]
                         then    handler "INFO" 0 "Successfully removed the older build '$oldest' from the archive."
                         else    handler "WARNING" 12 "Could not remove the older build '$oldest' from the archive."
                         fi
 
-                else    handler "WARNING" 13 "There's clutter on the archive, but the version isn't lower than the previously archived one."
+                else    handler "WARNING" 13 "There is clutter on the archive, but the version isn't lower than the previously archived one."
                 
                 fi
         
