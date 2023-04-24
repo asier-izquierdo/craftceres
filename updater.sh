@@ -12,6 +12,33 @@ MC_VERSION_REGEX="1\.[0-9]{2}\.[0-9]"
 BUILD_NUMBER_REGEX="[0-9]{3,4}"
 ARCHIVE=$papermc_path/archive
 
+# This is an optional function. Sends a message to Telegram reporting the script's outcome.
+reporter() {
+        # Uncomment the following local variables and define the corresponding values to enable
+        # the reporter, otherwise it will just show a warning reporting that it is not enabled
+
+        # local bot_url="https://api.telegram.org/botTOKEN/sendMessage"
+        # local chat_id="<ID of the chat with the bot>"
+
+        if [[ (-n $bot_url) && (-n $chat_id) ]]
+        then
+
+                case $1 in
+                        OK)
+                                local script_result=$(echo "The script successfully finished!")
+                                ;;
+                        NOT)
+                                local script_result=$(echo -E "The script executed, but there's been a problem. Here's the log entry:\n\n$2")
+                                ;;
+                esac
+                
+                curl -s -X POST "$bot_url" -d chat_id=$chat_id -d text="$script_result"
+        else    handler "WARNING" 15 "The reporter is not enabled. To enable it, please set both <bot_url> and <chat_id>. No notifications were sent."
+        fi
+
+return 0
+}
+
 # Starts the PaperMC Java job with the specified build
 server_starter() {
         handler "INFO" 0 "Starting the server with the $1 build..."
@@ -97,7 +124,9 @@ handler() {
 
     # Exit the script only if the call was for an error
     if [[ $report_type == "ERROR" ]]
-    then    exit $report_code
+    then    
+            reporter "NOT" "$report_message"
+            exit $report_code
     else    return $report_code
     fi
 
@@ -288,3 +317,5 @@ else    handler "INFO" 0 "There were no updates for the server."
 fi
 
 handler "INFO" 0 "The script successfully executed. Until next week!"
+
+reporter "OK"
