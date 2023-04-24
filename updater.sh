@@ -315,5 +315,4 @@ then
 else
         handler "INFO" 0 "There were no updates for the server."
         reporter "OK" "; however, there were no updates for the server."
-
 fi
