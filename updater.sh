@@ -25,7 +25,7 @@ reporter() {
 
                 case $1 in
                 OK)
-                        local script_result=$(echo -e "The Updater executed $2")
+                        local script_result=$(echo -e "The Updater executed$2")
                         ;;
                 NOT)
                         local script_result=$(echo -e "The Updater executed; however, there has been a problem. Here is the log entry:\n\n$2")
