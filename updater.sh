@@ -72,12 +72,13 @@ handler() {
     local report_type=$1
     local report_code=$2
     local report_message=$3
+    local no_restart_codes=(0 1 2 3 6 7 10 12 14)
 
     log_entry "$report_type" "$report_code" "$report_message"
 
     # Restart the server with the previously used PaperMC build if there has been an error other than 3, 2, or
     # if it has been correctly executed (0)
-    if [[ ($report_code != 0) && ($report_code != 1) && ($report_code != 2) && ($report_code != 3) && ($report_code != 6) && ($report_code != 7) && ($report_code != 10) && ($report_code != 12) && ($report_code != 14) ]]
+    if [[ ! "${$no_restart_codes[@]}" =~ $report_code ]]
     then
     
         # If the previously used PaperMC build has been archived, move it back
