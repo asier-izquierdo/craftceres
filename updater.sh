@@ -228,7 +228,7 @@ then
         mkdir $ARCHIVE
 
         if [ $? -ne 0 ]
-        then    handler "ERROR" 6 "Could not create the archives directory. It is necessary for archiving previously working .jars in a tidied manener."
+        then    handler "ERROR" 6 "Could not create the archives directory. It is necessary for archiving previously working .jars in a tidied manner."
         else    handler "INFO" 0 "Created directory for archiving the latest working PaperMC .jar"
         fi
 
