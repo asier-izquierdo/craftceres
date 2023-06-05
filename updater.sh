@@ -12,7 +12,7 @@ ARCHIVE=$papermc_path/archive
 
 # This is an optional function. Sends a message to Telegram reporting the script's outcome.
 reporter() {
-        
+
         # Check if bot_url and chat_id are set
         if [[ (-n $bot_url) && (-n $chat_id) ]]
         then
@@ -86,7 +86,7 @@ log_entry() {
         fi
 
         # Verbose progress and errors instead of logging them if the execution is manual instead of a cron job
-        if [ -n "$PS1" ]
+        if [ -n '$PS1' ]
         then    echo -e "$entry"
         else    echo -e "$entry" >> $log_file_path
         fi
@@ -101,9 +101,9 @@ handler() {
     local report_message=$3
     # List of the codes that will lead to a server restart 
     local restart_codes=(5 8 9)
-    
+
     log_entry "$report_type" "$report_code" "$report_message"
-    
+
     # Restart the server with the previously used PaperMC build if there has been an error contained in the array
     if [[ "${restart_codes[@]}" =~ $report_code ]]
     then
@@ -188,7 +188,7 @@ download_latest_build() {
         if [ $? -ne 0 ]
         then    handler "ERROR" 5 "The latest PaperMC build could not be downloaded."
         else
-        
+
                 if [ -n "$current_build" ]
                 then
                         handler "INFO" 0 "Archiving previous build..."
@@ -231,7 +231,7 @@ unclutterer() {
 
                 else    handler "WARNING" 13 "There is clutter on the archive, but the version isn't lower than the previously archived one."
                 fi
-        
+
         else    handler "WARNING" 14 "There was not anything to remove from the archive."
         fi
 
