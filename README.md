@@ -9,7 +9,7 @@ _The Updater script is in charge of updating the server with the latest PaperMC 
 Currently supports Minecraft updates only up to version 1.99.9.\
 Designed to update _any_ PaperMC server setup. It should be run with `sudo` unless set as a cron job since PaperMC is (or should be) run by a user with limited permissions.\
 \
-The Updater relies on the following dependencies for it to work:[^1]
+The Updater relies on the following dependencies to work:[^1]
 
  - `tmux`[^2]
  - `curl`
@@ -22,8 +22,9 @@ The Updater relies on the following dependencies for it to work:[^1]
 
 ### The Reporter
 
-There's an optional feature in the Updater which allows the script to send a message through your own Telegram bot that reports the status in which the script exited, that is if it successfully executed or exited due to an error.\
-It should be configured by defining the two local variables at the beginning of the 'reporter()' function.
+There's an optional feature in the Updater[^3] which allows the script to send a message through your own Telegram bot that reports the status in which the script exited, that is if it successfully executed or exited due to an error.
+
+[^3]:The definition of the corresponding paths as well as the enabling of the reporter should be made on the 'updater.cfg' file.
 
 ## backer.sh
 
