@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Modify accordingly if needed
-source .updater.cfg
+source ./updater.cfg
 
 # Constants, ordered by likeliness of change
 PAPER_API_URL="https://api.papermc.io/v2/projects/paper"
