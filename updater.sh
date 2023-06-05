@@ -19,7 +19,7 @@ reporter() {
 
                 case $1 in
                 OK)
-                        local script_result=$(echo -e "The Updater executed $2")
+                        local script_result=$(echo -e "The Updater executed$2")
                         ;;
                 NOT)
                         local script_result=$(echo -e "The Updater executed; however, there has been a problem. Here is the log entry:\n\n$2")
@@ -301,7 +301,7 @@ then
         fi
 
         handler "INFO" 0 "The PaperMC server has successfully been updated and restarted."
-        reporter "OK" "and the server has correctly been updated and restarted."
+        reporter "OK" ", and the server has correctly been updated and restarted."
         unclutterer
 else
         handler "INFO" 0 "There were no updates for the server."
