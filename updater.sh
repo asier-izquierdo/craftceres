@@ -1,10 +1,7 @@
 #!/bin/bash
 
-# Modify these variables with the corresponding values (do not use "/" after a directory)
-papermc_path="<path to the papermc.jar parent directory>"
-log_file_path="<log file path>" # Include your desired log file name ('/path/name.log')
-tmux_session_name="<name of the tmux session where papermc is running>"
-tmux_session_path="<path to the tmux session location>" # Usually '/tmp/tmux-<UID_of_the_invoker>/default'
+# Modify accordingly if needed
+source .updater.cfg
 
 # Constants, ordered by likeliness of change
 PAPER_API_URL="https://api.papermc.io/v2/projects/paper"
@@ -14,18 +11,14 @@ ARCHIVE=$papermc_path/archive
 
 # This is an optional function. Sends a message to Telegram reporting the script's outcome.
 reporter() {
-        # Uncomment the following local variables and define the corresponding values to enable
-        # the reporter, otherwise it will just show a warning reporting that it is not enabled
-
-        # local bot_url="https://api.telegram.org/botTOKEN/sendMessage"
-        # local chat_id="<ID of the chat with the bot>"
-
+        
+        # Check if bot_url and chat_id are set
         if [[ (-n $bot_url) && (-n $chat_id) ]]
         then
 
                 case $1 in
                 OK)
-                        local script_result=$(echo -e "The Updater executed$2")
+                        local script_result=$(echo -e "The Updater executed $2")
                         ;;
                 NOT)
                         local script_result=$(echo -e "The Updater executed; however, there has been a problem. Here is the log entry:\n\n$2")
@@ -307,7 +300,7 @@ then
         fi
 
         handler "INFO" 0 "The PaperMC server has successfully been updated and restarted."
-        reporter "OK" " and the server has correctly been updated and restarted."
+        reporter "OK" "and the server has correctly been updated and restarted."
         unclutterer
 else
         handler "INFO" 0 "There were no updates for the server."
