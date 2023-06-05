@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Imports the variables that need to be set in order for the script to work; AKA, the configuration.
 # Modify accordingly if needed
 source ./updater.cfg
 
