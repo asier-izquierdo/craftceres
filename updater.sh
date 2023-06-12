@@ -7,7 +7,7 @@ source path/to/updater.cfg
 # Constants, ordered by likeliness of change
 PAPER_API_URL="https://api.papermc.io/v2/projects/paper"
 MC_VERSION_REGEX="1\.[0-9]{2}\.{0,1}[0-9]{0,2}"
-BUILD_NUMBER_REGEX="[0-9]{1,4}"
+BUILD_NUMBER_REGEX=",[0-9]{1,4}"
 ARCHIVE=$papermc_path/archive
 
 # This is an optional function. Sends a message to Telegram reporting the script's outcome.
@@ -164,7 +164,7 @@ get() {
                 ;;
         latest_build)
                 handler "INFO" 0 "Fetching latest available PaperMC build..."
-                latest_build=$(curl -s "$PAPER_API_URL/versions/$mc_version" | grep -Eo "$BUILD_NUMBER_REGEX" | sort -r | head -1)
+                latest_build=$(curl -s "$PAPER_API_URL/versions/$mc_version" | grep -Eo "$BUILD_NUMBER_REGEX" | sort -n | tail -1 | tr -d ',')
                 ;;
         current_build)
                 handler "INFO" 0 "Checking currently used PaperMC build..."
