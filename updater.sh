@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # Imports the variables that need to be set in order for the script to work; AKA, the configuration.
-# Modify accordingly if needed
-source ./updater.cfg
+# Modify accordingly if needed, paths should be absolute.
+source path/to/updater.cfg
 
 # Constants, ordered by likeliness of change
 PAPER_API_URL="https://api.papermc.io/v2/projects/paper"
-MC_VERSION_REGEX="1\.[0-9]{2}\.[0-9]"
-BUILD_NUMBER_REGEX="[0-9]{3,4}"
+MC_VERSION_REGEX="1\.[0-9]{2}\.{0,1}[0-9]{0,2}"
+BUILD_NUMBER_REGEX="[0-9]{1,4}"
 ARCHIVE=$papermc_path/archive
 
 # This is an optional function. Sends a message to Telegram reporting the script's outcome.
