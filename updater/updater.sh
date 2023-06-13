@@ -42,7 +42,6 @@ server_starter() {
 return 0
 }
 
-
 # Sends a stop signal to the running Java job through Tmux
 server_stopper() {
         handler "INFO" 0 "Stopping the server..."
