@@ -2,7 +2,7 @@
 
 # Imports the variables that need to be set in order for the script to work; AKA, the configuration.
 # Modify accordingly if needed
-source ./updater.cfg
+configuration="path/to/updater.cfg"
 
 # Constants, ordered by likeliness of change
 PAPER_API_URL="https://api.papermc.io/v2/projects/paper"
@@ -27,7 +27,7 @@ reporter() {
                 esac
 
                 curl -s -X POST "$bot_url" -d chat_id=$chat_id -d text="$script_result"
-        else    handler "WARNING" 15 "The reporter is not enabled. To enable it, please set both <bot_url> and <chat_id>. No notifications were sent."
+        else    handler "WARNING" 16 "The reporter is not enabled. To enable it, please set both <bot_url> and <chat_id>. No notifications were sent."
         fi
 
 return 0
@@ -131,13 +131,13 @@ return 0
 check_input() {
 
     if [[ (! -f $1) && (! -d $1) && ($2 != "<tmuxsession>") ]]
-    then        handler "ERROR" 1 "The specified path for $2 does not exist."
+    then        handler "ERROR" 2 "The specified path for $2 does not exist."
     elif [[ $2 == "<tmuxsession>" ]]
     then
                 tmux -S $tmux_session_path has-session -t $1 2> /dev/null
 
                 if [ $? -ne 0 ]
-                then    handler "ERROR" 2 "The specified tmux session '"$1"' does not exist."
+                then    handler "ERROR" 3 "The specified tmux session '"$1"' does not exist."
                 fi
 
     fi
@@ -148,7 +148,7 @@ return 0
 # Verifies that the required packages are present in the system
 check_dependency() {
         command -v "$1" >/dev/null 2>&1 || {
-                handler "ERROR" 3 "Missing dependency <$1>."
+                handler "ERROR" 4 "Missing dependency <$1>."
         }
 
 return 0
@@ -173,7 +173,7 @@ get() {
         esac
 
         if [[ ($? != 0) || (-z "$$1") ]]
-        then    handler "ERROR" 4 "Couldn't determine '$1'."
+        then    handler "ERROR" 5 "Couldn't determine '$1'."
         fi
 
 return 0
@@ -186,7 +186,7 @@ download_latest_build() {
         wget -q $LATEST_BUILD_LINK -P $papermc_path
 
         if [ $? -ne 0 ]
-        then    handler "ERROR" 5 "The latest PaperMC build could not be downloaded."
+        then    handler "ERROR" 6 "The latest PaperMC build could not be downloaded."
         else
 
                 if [ -n "$current_build" ]
@@ -197,7 +197,7 @@ download_latest_build() {
 
                         if [ $? -eq 0 ]
                         then    handler "INFO" 0 "Successfully moved the previous build to the archive."
-                        else    handler "WARNING" 11 "Could not move the previous build to the archive."
+                        else    handler "WARNING" 12 "Could not move the previous build to the archive."
                         fi
 
                 fi
@@ -226,17 +226,41 @@ unclutterer() {
 
                         if [ $? -eq 0 ]
                         then    handler "INFO" 0 "Successfully removed the older build '$oldest' from the archive."
-                        else    handler "WARNING" 12 "Could not remove the older build '$oldest' from the archive."
+                        else    handler "WARNING" 13 "Could not remove the older build '$oldest' from the archive."
                         fi
 
-                else    handler "WARNING" 13 "There is clutter on the archive, but the version isn't lower than the previously archived one."
+                else    handler "WARNING" 14 "There is clutter on the archive, but the version isn't lower than the previously archived one."
                 fi
 
-        else    handler "WARNING" 14 "There was not anything to remove from the archive."
+        else    handler "WARNING" 15 "There was not anything to remove from the archive."
         fi
 
 return 0
 }
+
+if [[ ! -f $configuration ]]
+then
+        echo "The configuration couldn't be found, this may be due to a wrongly defined path or to the file not existing. Please, provide a valid configuration path."    
+        echo "This event will NOT be logged."
+        exit
+
+else    source $configuration
+fi
+
+if [[ -z "$papermc_path" || -z "$log_file_path" || -z "$tmux_session_name" || -z "$tmux_session_path" ]]
+then
+        unset="One or more of the configuration variables are unset; note that, except 'bot_url' and 'chat_id', all variables are required in order for the updater to work properly."
+        
+        if [ -z "$log_file_path" ]
+        then
+                echo $unset
+                echo "This event will NOT be logged."
+                exit
+                
+        else    handler "ERROR" 1 $unset
+        fi
+
+fi
 
 handler "INFO" 0 "Starting the updater execution..."
 
@@ -262,7 +286,7 @@ then
         mkdir $ARCHIVE
 
         if [ $? -ne 0 ]
-        then    handler "ERROR" 6 "Could not create the archives directory. It is necessary for archiving previously working .jars in a tidied manner."
+        then    handler "ERROR" 7 "Could not create the archives directory. It is necessary for archiving previously working .jars in a tidied manner."
         else    handler "INFO" 0 "Created directory for archiving the latest working PaperMC .jar"
         fi
 
@@ -277,10 +301,10 @@ then
 
                 # Uses `check` to check, since using `$?` could lead to false positives
                 if [ -n "$(pidof java)" ]
-                then    handler "ERROR" 7 "The server failed to stop."
+                then    handler "ERROR" 8 "The server failed to stop."
                 fi
 
-        else    handler "WARNING" 10 "The PaperMC server was not running."
+        else    handler "WARNING" 11 "The PaperMC server was not running."
         fi
 
         download_latest_build
@@ -294,10 +318,10 @@ then
                         # If the server couldn't use the latest build, it removes it before restarting with the previous
                         # one, in order for another run of the script not to indicate that no updates were found
                         rm $papermc_path/paper-$mc_version-$latest_build.jar
-                        handler "ERROR" 8 "The server failed to start using the latest PaperMC build."
+                        handler "ERROR" 9 "The server failed to start using the latest PaperMC build."
                 fi
 
-        else    handler "ERROR" 9 "The latest PaperMC version could not be found on the system."
+        else    handler "ERROR" 10 "The latest PaperMC version could not be found on the system."
         fi
 
         handler "INFO" 0 "The PaperMC server has successfully been updated and restarted."
