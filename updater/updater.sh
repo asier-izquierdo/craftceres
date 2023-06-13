@@ -164,7 +164,7 @@ get() {
                 ;;
         latest_build)
                 handler "INFO" 0 "Fetching latest available PaperMC build..."
-                latest_build=$(curl -s "$PAPER_API_URL/versions/$mc_version" | grep -Eo "$BUILD_NUMBER_REGEX]" | grep -o "$BUILD_NUMBER_REGEX" | sort -r | head -1)
+                latest_build=$(curl -s "$PAPER_API_URL/versions/$mc_version" | grep -oE "$BUILD_NUMBER_REGEX]" | grep -oE "$BUILD_NUMBER_REGEX" | sort -r | head -1)
                 ;;
         current_build)
                 handler "INFO" 0 "Checking currently used PaperMC build..."
