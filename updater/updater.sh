@@ -1,13 +1,13 @@
 #!/bin/bash
 
 # Imports the variables that need to be set in order for the script to work; AKA, the configuration.
-# Modify accordingly
+# Modify accordingly, paths should be absolute.
 configuration="path/to/updater.cfg"
 
 # Constants, ordered by likeliness of change
 PAPER_API_URL="https://api.papermc.io/v2/projects/paper"
-MC_VERSION_REGEX="1\.[0-9]{2}\.[0-9]"
-BUILD_NUMBER_REGEX="[0-9]{3,4}"
+MC_VERSION_REGEX="1\.[0-9]{2}\.{0,1}[0-9]{0,2}"
+BUILD_NUMBER_REGEX=",[0-9]{1,4}"
 ARCHIVE=$papermc_path/archive
 
 # This is an optional function. Sends a message to Telegram reporting the script's outcome.
@@ -215,12 +215,26 @@ unclutterer() {
 
         if [ $count -gt 1 ]
         then
-                local oldest=$(ls -t $ARCHIVE | grep 'paper-*' | tail -1)
-                local newest=$(ls -t $ARCHIVE | grep 'paper-*' | head -1)
-                local oldest_num=$(echo $oldest| grep -oE "[0-9]{3,4}" | head -1)
-                local newest_num=$(echo $newest| grep -oE "[0-9]{3,4}" | head -1)
+                local oldest=$(ls $ARCHIVE | sort -rV | grep 'paper-*' | tail -1)
+                local newest=$(ls $ARCHIVE | sort -rV | grep 'paper-*' | head -1)
 
-                if [ $oldest_num -lt $newest_num ]
+                local oldest_version=$(echo $oldest | grep -oE "$MC_VERSION_REGEX-[0-9]{1,4}")
+                local newest_version=$(echo $newest | grep -oE "$MC_VERSION_REGEX-[0-9]{1,4}")
+
+                local oldest_release=$(echo $oldest_version | grep -oE "\.[0-9]+\." | grep -oE "[0-9]+")
+                local newest_release=$(echo $newest_version | grep -oE "\.[0-9]+\." | grep -oE "[0-9]+")
+
+                local oldest_update=0
+                local oldest_update=$(echo $oldest_version | grep -E "$oldest_release\." | grep -oE "\.[0-9]+-" | grep -oE "[0-9]+")
+                local newest_update=0
+                local newest_update=$(echo $newest_version | grep -E "$newest_release\." | grep -oE "\.[0-9]+-" | grep -oE "[0-9]+")
+
+                local oldest_build=$(echo $oldest_version | grep -oE "\-[0-9]+" | grep -oE "[0-9]+")
+                local newest_build=$($newest_version | grep -oE "\-[0-9]+" | grep -oE "[0-9]+")
+
+                # Compares each number of the file to check if they all are lesser than the newest update, if any number is greater,
+                # then the version that is trying to be archived is not newer, thus discarding it
+                if [[ ($oldest_release -le $newest_release) && ($oldest_update -le $newest_update) && ($oldest_build -lt $newest_build) ]]
                 then
                         rm $ARCHIVE/$oldest
 
