@@ -26,7 +26,7 @@ reporter() {
                         ;;
                 esac
 
-                curl -s -X POST "$bot_url" -d chat_id=$chat_id -d text="$script_result"
+                curl -s -X POST "$bot_url" -d chat_id=$chat_id -d text="$script_result" >/dev/null 2>&1
         else    handler "WARNING" 16 "The reporter is not enabled. To enable it, please set both <bot_url> and <chat_id>. No notifications were sent."
         fi
 
@@ -262,7 +262,6 @@ then
         echo "The configuration couldn't be found, this may be due to a wrongly defined path or to the file not existing. Please, provide a valid configuration path."    
         echo "This event will NOT be logged."
         exit
-
 else    source $configuration
 fi
 
@@ -277,7 +276,6 @@ then
                 echo $unset
                 echo "This event will NOT be logged."
                 exit
-                
         else    handler "ERROR" 1 $unset
         fi
 
