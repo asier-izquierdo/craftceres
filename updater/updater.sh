@@ -286,6 +286,7 @@ fi
 handler "INFO" 0 "Starting the updater execution..."
 
 check_dependency "curl"
+check_dependency "jq"
 check_dependency "tmux"
 check_dependency "java"
 check_dependency "wget"
