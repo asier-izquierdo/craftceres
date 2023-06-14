@@ -214,20 +214,25 @@ unclutterer() {
 
         if [ $count -gt 1 ]
         then
+                # Gets the whole file name of the oldest and the newest files on the archive
                 local oldest=$(ls $ARCHIVE | sort -rV | grep 'paper-*' | tail -1)
                 local newest=$(ls $ARCHIVE | sort -rV | grep 'paper-*' | head -1)
 
+                # Gets the version and build from the file name (i.e. '1.20.1-18')
                 local oldest_version=$(echo $oldest | grep -oE "$MC_VERSION_REGEX-[0-9]{1,4}")
                 local newest_version=$(echo $newest | grep -oE "$MC_VERSION_REGEX-[0-9]{1,4}")
 
+                # Gets the release number from the version (from the last example, the '20')
                 local oldest_release=$(echo $oldest_version | grep -oE "\.[0-9]+\." | grep -oE "[0-9]+")
                 local newest_release=$(echo $newest_version | grep -oE "\.[0-9]+\." | grep -oE "[0-9]+")
 
+                # Gets the update number from the version (from the first example, the last '1')
                 local oldest_update=0
                 local oldest_update=$(echo $oldest_version | grep -E "$oldest_release\." | grep -oE "\.[0-9]+-" | grep -oE "[0-9]+")
                 local newest_update=0
                 local newest_update=$(echo $newest_version | grep -E "$newest_release\." | grep -oE "\.[0-9]+-" | grep -oE "[0-9]+")
 
+                # Gets the build number from the version (from the first example, the '18')
                 local oldest_build=$(echo $oldest_version | grep -oE "\-[0-9]+" | grep -oE "[0-9]+")
                 local newest_build=$($newest_version | grep -oE "\-[0-9]+" | grep -oE "[0-9]+")
 
@@ -251,6 +256,7 @@ unclutterer() {
 return 0
 }
 
+# Checks if the configuration file is available, the even isn't logged because without the configuration, no log file is defined
 if [[ ! -f $configuration ]]
 then
         echo "The configuration couldn't be found, this may be due to a wrongly defined path or to the file not existing. Please, provide a valid configuration path."    
@@ -260,10 +266,12 @@ then
 else    source $configuration
 fi
 
+# Checks if every required variable from the configuration is set, that is, everything but the reporter's
 if [[ -z "$papermc_path" || -z "$log_file_path" || -z "$tmux_session_name" || -z "$tmux_session_path" ]]
 then
         unset="One or more of the configuration variables are unset; note that, except 'bot_url' and 'chat_id', all variables are required in order for the updater to work properly."
         
+        # In the event that the log file is defined, it logs the error
         if [ -z "$log_file_path" ]
         then
                 echo $unset
@@ -305,6 +313,7 @@ then
 
 fi
 
+# Checks if there's no installation or if the current is an older version in order to determine wether the updating process should trigger
 if [ -z "$current_build" ] || [ $current_build -lt $latest_build ]
 then
 
