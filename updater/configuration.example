@@ -2,8 +2,6 @@
 # Modify these variables with the corresponding values (do not use "/" after a directory) #
 # --------------------------------------------------------------------------------------- #
 papermc_path="<path to the papermc.jar parent directory>"
-# log_file_path should match '/path/name.log', used for logging the updater activities
-log_file_path="<log file path>"
 tmux_session_name="<name of the tmux session where papermc is running>"
 # tmux_session_path is usually found at '/tmp/tmux-<UID_of_the_invoker>/default'
 tmux_session_path="<path to the tmux session location>"

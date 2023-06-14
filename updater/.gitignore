@@ -1,0 +1,5 @@
+# Log file(s)
+*.log
+
+# The configuration file
+updater.conf
