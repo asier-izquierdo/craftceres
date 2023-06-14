@@ -5,7 +5,7 @@ _The Updater script is in charge of updating the server with the latest PaperMC 
 Currently supports Minecraft updates only up to version 1.99.9.\
 Designed to update _any_ PaperMC server setup. It should be run with `sudo` unless set as a cron job since PaperMC is (or should be) run by a user with limited permissions.\
 \
-The Updater relies on the following dependencies to work:[^1]
+The Updater relies on the following packages to work:[^1]
 
  - `tmux`[^2]
  - `curl`
