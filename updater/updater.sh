@@ -172,7 +172,7 @@ get() {
         esac
 
         if [[ ($? != 0) || (-z "$$1") ]]
-        then    handler "ERROR" 5 "Couldn't determine '$1'."
+        then    handler "ERROR" 5 "Could not determine '$1'."
         fi
 
 return 0
@@ -247,7 +247,7 @@ unclutterer() {
                         else    handler "WARNING" 13 "Could not remove the older build '$oldest' from the archive."
                         fi
 
-                else    handler "WARNING" 14 "There is clutter on the archive, but the version isn't lower than the previously archived one."
+                else    handler "WARNING" 14 "There is clutter on the archive, but the version is not lower than the previously archived one."
                 fi
 
         else    handler "WARNING" 15 "There was not anything to remove from the archive."
@@ -259,7 +259,7 @@ return 0
 # Checks if the configuration file is available, the even isn't logged because without the configuration, no log file is defined
 if [[ ! -f $configuration ]]
 then
-        echo "The configuration couldn't be found, this may be due to a wrongly defined path or to the file not existing. Please, provide a valid configuration path."    
+        echo "The configuration could not be found, this may be due to a wrongly defined path or to the file not existing. Please, provide a valid configuration path."    
         echo "This event will NOT be logged."
         exit
 else    source $configuration
