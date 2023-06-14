@@ -235,7 +235,7 @@ unclutterer() {
 
                 # Gets the build number from the version (from the first example, the '18')
                 local oldest_build=$(echo $oldest_version | grep -oE "\-[0-9]+" | grep -oE "[0-9]+")
-                local newest_build=$($newest_version | grep -oE "\-[0-9]+" | grep -oE "[0-9]+")
+                local newest_build=$(echo $newest_version | grep -oE "\-[0-9]+" | grep -oE "[0-9]+")
 
                 # Compares each number of the file to check if they all are lesser than the newest update, if any number is greater,
                 # then the version that is trying to be archived is not newer, thus discarding it
