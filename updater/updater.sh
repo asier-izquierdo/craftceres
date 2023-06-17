@@ -168,7 +168,7 @@ get() {
                 ;;
         current_build)
                 handler "INFO" 0 "Checking currently used PaperMC build..."
-                current_build=$(find $papermc_path -name "paper-$mc_version*" -maxdepth 1 2> /dev/null | grep -Eo "[0-9]\-$BUILD_NUMBER_REGEX\." | grep -Eo "$BUILD_NUMBER_REGEX\." | grep -Eo "$BUILD_NUMBER_REGEX")
+                current_build=$(find $papermc_path -name "paper-*" -maxdepth 1 2> /dev/null | grep -Eo "[0-9]\-$BUILD_NUMBER_REGEX\." | grep -Eo "$BUILD_NUMBER_REGEX\." | grep -Eo "$BUILD_NUMBER_REGEX")
                 ;;
         esac
 
