@@ -193,7 +193,7 @@ download_latest_build() {
                 then
                         handler "INFO" 0 "Archiving previous build..."
 
-                        mv $papermc_path/paper-$mc_version-$current_build.jar $ARCHIVE
+                        mv $papermc_path/paper-*-$current_build.jar $ARCHIVE
 
                         if [ $? -eq 0 ]
                         then    handler "INFO" 0 "Successfully moved the previous build to the archive."
