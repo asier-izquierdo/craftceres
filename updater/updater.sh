@@ -109,8 +109,8 @@ handler() {
     then
 
         # If the previously used PaperMC build has been archived, move it back
-        if [[ (! -f $papermc_path/paper-$mc_version-$current_build.jar) && (-f $ARCHIVE/paper-$mc_version-$current_build.jar) ]]
-        then    mv $ARCHIVE/paper-$mc_version-$current_build.jar $papermc_path
+        if [[ (! -f $papermc_path/paper-*-$current_build.jar) && (-f $ARCHIVE/paper-*-$current_build.jar) ]]
+        then    mv $ARCHIVE/paper-*-$current_build.jar $papermc_path
         fi
 
         server_starter "previous" $current_build
