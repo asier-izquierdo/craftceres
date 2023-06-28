@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Determines the absoulte path in which the script is located
-SCRIPT_DIR=$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)
+SCRIPT_DIR=$(dirname ${BASH_SOURCE[0]})
 
 # Constants, ordered by likeliness of change
 PAPER_API_URL="https://api.papermc.io/v2/projects/paper"
