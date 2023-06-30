@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Determines the absoulte path in which the script is located
-SCRIPT_DIR=$(cd $(dirname ${BASH_SOURCE[0]}) && pwd)
+SCRIPT_DIR=$(dirname ${BASH_SOURCE[0]})
 
 # Constants, ordered by likeliness of change
 PAPER_API_URL="https://api.papermc.io/v2/projects/paper"
@@ -10,6 +10,10 @@ BUILD_NUMBER_REGEX="[0-9]{1,4}"
 LOG="$SCRIPT_DIR/updater.log"
 CONF="$SCRIPT_DIR/updater.conf"
 ARCHIVE="$papermc_path/archive"
+
+# ########################### #
+# Start of optional functions #
+# ########################### #
 
 # This is an optional function. Sends a message to Telegram reporting the script's outcome.
 reporter() {
@@ -33,6 +37,10 @@ reporter() {
 
 return 0
 }
+
+# ########################## #
+# Start of regular functions #
+# ########################## #
 
 # Starts the PaperMC Java job with the specified build
 server_starter() {
@@ -109,8 +117,8 @@ handler() {
     then
 
         # If the previously used PaperMC build has been archived, move it back
-        if [[ (! -f $papermc_path/paper-$mc_version-$current_build.jar) && (-f $ARCHIVE/paper-$mc_version-$current_build.jar) ]]
-        then    mv $ARCHIVE/paper-$mc_version-$current_build.jar $papermc_path
+        if [[ (! -f $papermc_path/paper-*-$current_build.jar) && (-f $ARCHIVE/paper-*-$current_build.jar) ]]
+        then    mv $ARCHIVE/paper-*-$current_build.jar $papermc_path
         fi
 
         server_starter "previous" $current_build
@@ -168,7 +176,7 @@ get() {
                 ;;
         current_build)
                 handler "INFO" 0 "Checking currently used PaperMC build..."
-                current_build=$(find $papermc_path -name "paper-$mc_version*" 2> /dev/null | grep -Eo "[0-9]\-$BUILD_NUMBER_REGEX\." | grep -Eo "$BUILD_NUMBER_REGEX\." | grep -Eo "$BUILD_NUMBER_REGEX")
+                current_build=$(find $papermc_path -name "paper-*" -maxdepth 1 2> /dev/null | grep -Eo "[0-9]\-$BUILD_NUMBER_REGEX\." | grep -Eo "$BUILD_NUMBER_REGEX\." | grep -Eo "$BUILD_NUMBER_REGEX")
                 ;;
         esac
 
@@ -193,7 +201,7 @@ download_latest_build() {
                 then
                         handler "INFO" 0 "Archiving previous build..."
 
-                        mv $papermc_path/paper-$mc_version-$current_build.jar $ARCHIVE
+                        mv $papermc_path/paper-*-$current_build.jar $ARCHIVE
 
                         if [ $? -eq 0 ]
                         then    handler "INFO" 0 "Successfully moved the previous build to the archive."
@@ -256,6 +264,10 @@ unclutterer() {
 
 return 0
 }
+
+# ######################### #
+# Start of script execution #
+# ######################### #
 
 # Checks if the configuration file is available, the even isn't logged because without the configuration, no log file is defined
 if [[ ! -f $CONF ]]
