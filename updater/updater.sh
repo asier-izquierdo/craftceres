@@ -15,7 +15,7 @@ ARCHIVE="$papermc_path/archive"
 # Start of optional functions #
 # ########################### #
 
-# This is an optional function. Sends a message to Telegram reporting the script's outcome.
+# Sends a message to Telegram reporting the script's outcome.
 reporter() {
 
         # Check if bot_url and chat_id are set

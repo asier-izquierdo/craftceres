@@ -1,15 +1,18 @@
-# --------------------------------------------------------------------------------------- #
-# Modify these variables with the corresponding values (do not use "/" after a directory) #
-# --------------------------------------------------------------------------------------- #
+###########################################################################################
+# The following are necessary variables that need to be set for a proper execution.       #
+# Do not use "/" after a directory (i.e. /home/user).                                     #
+# `tmux_session_path` is usually found at '/tmp/tmux-<UID_of_the_invoker>/default'        #
+###########################################################################################
+
 papermc_path="<path to the papermc.jar parent directory>"
 tmux_session_name="<name of the tmux session where papermc is running>"
-# tmux_session_path is usually found at '/tmp/tmux-<UID_of_the_invoker>/default'
 tmux_session_path="<path to the tmux session location>"
 
-# --------------------------------------------------------------------------------------- #
-# Uncomment both the following variables and define the corresponding values to enable    #
-# the reporter, otherwise it will just show a warning reporting that it is not enabled.   #
-# --------------------------------------------------------------------------------------- #
-# Only 'TOKEN' should be replaced with the API token the BotFather generated
+###########################################################################################
+# Setting the corresponding values will enable the reporter, otherwise it will just show  #
+# a warning, indicating that it is not enabled.                                           #
+# Only 'TOKEN' should be replaced with the API token the BotFather generated              #
+###########################################################################################
+
 # bot_url="https://api.telegram.org/botTOKEN/sendMessage"
 # chat_id="<ID of the chat with the bot>"
