@@ -11,6 +11,10 @@ LOG="$SCRIPT_DIR/updater.log"
 CONF="$SCRIPT_DIR/updater.conf"
 ARCHIVE="$papermc_path/archive"
 
+# ########################### #
+# Start of optional functions #
+# ########################### #
+
 # This is an optional function. Sends a message to Telegram reporting the script's outcome.
 reporter() {
 
@@ -33,6 +37,10 @@ reporter() {
 
 return 0
 }
+
+# ########################## #
+# Start of regular functions #
+# ########################## #
 
 # Starts the PaperMC Java job with the specified build
 server_starter() {
@@ -256,6 +264,10 @@ unclutterer() {
 
 return 0
 }
+
+# ######################### #
+# Start of script execution #
+# ######################### #
 
 # Checks if the configuration file is available, the even isn't logged because without the configuration, no log file is defined
 if [[ ! -f $CONF ]]
