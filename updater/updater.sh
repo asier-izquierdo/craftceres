@@ -295,7 +295,8 @@ fi
 
 handler "INFO" 0 "Starting the updater execution..."
 
-check_dependencies ("curl" "jq" "tmux" "java" "wget" "test")
+dependencies=("curl" "jq" "tmux" "java" "wget" "test")
+check_dependencies $dependencies
 
 check_input $papermc_path "<papermc_path>"
 check_input $tmux_session_name "<tmuxsession>"
