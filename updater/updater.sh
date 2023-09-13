@@ -168,8 +168,9 @@ local missing=()
         done
 
         if [[ $counter -gt 0 ]]
-        miss=$(echo ${missing[*]} | tr ' ' ',')
-        then handler "ERROR" 5 "Missing dependencies: $miss."
+        then
+                miss=$(echo ${missing[*]} | tr ' ' ',')
+                handler "ERROR" 5 "Missing dependencies: $miss."
         fi
 
 return 0
