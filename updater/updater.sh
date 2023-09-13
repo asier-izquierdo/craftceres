@@ -156,20 +156,20 @@ return 0
 # Verifies that the required packages are present in the system
 check_dependencies() {
 
-local deps=$1
 local counter=0
 local missing=()
 
-        for i in "${deps[@]}"
+        for i in "${dependencies[@]}"
         do
                 command -v "$i" >/dev/null 2>&1 || {
-                        $counter=$counter+1
+                        ((counter++))
                         missing+=($i)
                 }
         done
 
         if [[ $counter -gt 0 ]]
-        then handler "ERROR" 5 "Missing dependencies ($missing)."
+        miss=$(echo ${missing[*]} | tr ' ' ',')
+        then handler "ERROR" 5 "Missing dependencies: $miss."
         fi
 
 return 0
@@ -295,8 +295,8 @@ fi
 
 handler "INFO" 0 "Starting the updater execution..."
 
-dependencies=("curl" "jq" "tmux" "java" "wget" "test")
-check_dependencies $dependencies
+dependencies=("curl" "jq" "tmux" "java" "wget")
+check_dependencies
 
 check_input $papermc_path "<papermc_path>"
 check_input $tmux_session_name "<tmuxsession>"
