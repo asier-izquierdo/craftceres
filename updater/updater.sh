@@ -18,21 +18,27 @@ ARCHIVE="$papermc_path/archive"
 # Sends a message to Telegram reporting the script's outcome.
 reporter() {
 
-        # Check if bot_url and chat_id are set
-        if [[ (-n $bot_url) && (-n $chat_id) ]]
+        # Check if the Telegram reporter is enabled
+        if [[ ( $telegram_reporter_enabled -eq "yes" ) ]]
         then
 
-                case $1 in
-                OK)
-                        local script_result=$(echo -e "The Updater executed$2")
-                        ;;
-                NOT)
-                        local script_result=$(echo -e "The Updater executed; however, there has been a problem. Here is the log entry:\n\n$2")
-                        ;;
-                esac
+                # Check if telegram_reporter_token and telegram_reporter_id are set
+                if [[ (-n $telegram_reporter_token) && (-n $telegram_reporter_id) ]]
+                then
 
-                curl -s -X POST "$bot_url" -d chat_id=$chat_id -d text="$script_result" >/dev/null 2>&1
-        else    handler "WARNING" 17 "The reporter is not enabled. To enable it, please set both <bot_url> and <chat_id>. No notifications were sent."
+                        case $1 in
+                        OK)
+                                local script_result=$(echo -e "The Updater executed$2")
+                                ;;
+                        NOT)
+                                local script_result=$(echo -e "The Updater executed; however, there has been a problem. Here is the log entry:\n\n$2")
+                                ;;
+                        esac
+
+                        curl -s -X POST "https://api.telegram.org/bot$telegram_reporter_token/sendMessage" -d chat_id=$telegram_reporter_id -d text="$script_result" >/dev/null 2>&1
+                else    handler "WARNING" 17 "The reporter is not correctly enabled. Please, set both <telegram_reporter_token> and <telegram_reporter_id>. No notifications were sent."
+                fi
+
         fi
 
 return 0
@@ -279,6 +285,25 @@ unclutterer() {
 return 0
 }
 
+# This function was written by Stefan Farestam, as seen in StackOverflow under the following link:
+# https://stackoverflow.com/questions/5014632/how-can-i-parse-a-yaml-file-from-a-linux-shell-script/21189044#21189044
+function parse_yaml {
+   local prefix=$2
+   local s='[[:space:]]*' w='[a-zA-Z0-9_]*' fs=$(echo @|tr @ '\034')
+   sed -ne "s|^\($s\):|\1|" \
+        -e "s|^\($s\)\($w\)$s:$s[\"']\(.*\)[\"']$s\$|\1$fs\2$fs\3|p" \
+        -e "s|^\($s\)\($w\)$s:$s\(.*\)$s\$|\1$fs\2$fs\3|p"  $1 |
+   awk -F$fs '{
+      indent = length($1)/2;
+      vname[indent] = $2;
+      for (i in vname) {if (i > indent) {delete vname[i]}}
+      if (length($3) > 0) {
+         vn=""; for (i=0; i<indent; i++) {vn=(vn)(vname[i])("_")}
+         printf("%s%s%s=\"%s\"\n", "'$prefix'",vn, $2, $3);
+      }
+   }'
+}
+
 # ######################### #
 # Start of script execution #
 # ######################### #
@@ -286,12 +311,12 @@ return 0
 # Checks if the configuration file is available, the even isn't logged because without the configuration, no log file is defined
 if [[ ! -f $CONF ]]
 then    handler "ERROR" 1 "The configuration could not be found, this may be due to a wrongly defined path or to the file not existing. Please, provide a valid configuration path."    
-else    source $CONF
+else    parse_yaml $CONF
 fi
 
 # Checks if every required variable from the configuration is set, that is, everything but the reporter's
 if [[ -z "$papermc_path" || -z "$tmux_session_name" || -z "$tmux_session_path" ]]
-then    handler "ERROR" 2 "One or more of the configuration variables are unset; note that, except 'bot_url' and 'chat_id', all variables are required in order for the updater to work properly."
+then    handler "ERROR" 2 "One or more of the configuration variables are unset. Note that all required variables need to be set in order for the updater to work properly."
 fi
 
 handler "INFO" 0 "Starting the updater execution..."
