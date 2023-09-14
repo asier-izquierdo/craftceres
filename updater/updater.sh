@@ -311,7 +311,7 @@ function parse_yaml {
 # Checks if the configuration file is available, the even isn't logged because without the configuration, no log file is defined
 if [[ ! -f $CONF ]]
 then    handler "ERROR" 1 "The configuration could not be found, this may be due to a wrongly defined path or to the file not existing. Please, provide a valid configuration path."    
-else    parse_yaml $CONF
+else    eval $(parse_yaml $CONF)
 fi
 
 # Checks if every required variable from the configuration is set, that is, everything but the reporter's
