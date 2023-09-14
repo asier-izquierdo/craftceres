@@ -18,7 +18,9 @@ The Updater relies on the following packages to work:[^1]
 [^3]:The `jq` package is used to better parse the PaperMC's API Json response in order to get the latest build available for the current version.
 
 \
-*The Updater uses the `updater.conf` file, which is in charge of defining the paths specific to each setup to best adapt to it. The reason behind using a separate file for this purpose is to seamlessly update the script without having to re-define the paths again. This file should be created by copying `configuration.example`.*
+*The Updater uses the `updater.conf` file, which is in charge of defining the paths specific to each setup to best adapt to it. The reason behind using a separate file for this purpose is to seamlessly update the script without having to re-define the paths again. This file should be created by copying and renaming `configuration.example`.*
+
+The `configuration.example` file uses a YAML-like format on [Stefan Farestam's YAML parser function](https://stackoverflow.com/questions/5014632/how-can-i-parse-a-yaml-file-from-a-linux-shell-script/21189044#21189044) through `sed` and `awk`.
 
 ### The Reporter
 
