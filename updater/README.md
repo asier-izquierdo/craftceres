@@ -26,7 +26,8 @@ The `configuration.example` file uses a YAML-like format, that the updater parse
 Intentation is very important, so you should not modify anything but the actual value, with a space between the ':' and the value itself.
 
 There are two sets of configuration groups, one required for the script to work, and the other optional to enable aditional features.
-The required block:
+
+**The required block:**
 ```
 # Required settings
 
@@ -37,17 +38,17 @@ tmux_session:
   path: <path to the tmux session location>'
 ```
 consists on the 'papermc' path, that is, the parent directory under which the server files are located, and the `tmux` session information.\
-All of the configuration paths **must** be absolute, and **it is sensible that they doesn't end with a slash**, so:
+All of the configuration paths **must** be absolute, and **it is sensible that they doesn't end with a slash**, so (using the papermc path as an example):
 
--`path: /home/user/craftceres` is a valid definition.\
--`path: /home/user/craftceres/` is NOT a valid definition.
+ - `path: /home/user/craftceres` is a valid definition.\
+ - `path: /home/user/craftceres/` is NOT a valid definition.
 
 The `tmux` session information consists on the name you gave (or have to give) the session created for the server, since that's an accurate way to interact with it, and the path under which the session data is located. The name should be able to be defined using double quotes, according to the parser function's author, but I have not tested it.
 
 The path of the session is necessary, since tmux doesn't work under "generic" paths but it rather names the path after the user that created the sessions. This means that if you create the `tmux` session with your regular user, and then the script will execute with root, root won't be able to locate the session by name, hence the need to define the session path.\
 Under Red-Hat based distributions, the path usually is `/tmp/tmux-UID/default `, where "UID" refers to the UID of the user that created the `tmux` session. Other distributions have not been tested, but it shouldn't be hard to find their path.
 
-On the other hand, the optional block:
+**The optional block:**
 ```
 # Optional settings
 
@@ -58,12 +59,19 @@ telegram_reporter:
   id: <ID of the chat with the bot>
   token: <JUST the token found on the bot's URL (https://api.telegram.org/botTOKEN/sendMessage)>
 ```
+consists on optional features that can optionally be enabled: the Telegram reporter configuration, and the (yet unavailable) world reset option, whose descriptions you can find further below. The optional functions use an aditional parameter "enabled" to indicate wether to use it or not. The only understood value is "yes", and anything else including a blank space will be understood as not enabled.
 
+The telegram reporter (described below), if enabled, needs all elements to be properly set in order for it to work.
+
+- `id` should contain the ID of the chat with the bot you created.
+- `token` should contain the API token for the bot, found in the URL with the format:\
+~~(https://)api.telegram.org/bot~~TOKEN/~~sendMessage~~
 
 ---
 
 ### The Reporter
 
-There's an optional feature in the Updater[^4] which allows the script to send a message through your own Telegram bot that reports the status in which the script exited, that is, wether it successfully executed or if it exited due to an error.
+There's an optional feature in the Updater[^4] which allows the script to send a message through your own Telegram bot[^5] that reports the status in which the script exited, that is, wether it successfully executed or if it exited due to an error.
 
 [^4]:The definition of the corresponding paths as well as the enabling of the reporter should be made on the 'updater.cfg' file.
+[^5]:Creating a Telegram bot is a simple process that can be achieved following [their official tutorial](https://core.telegram.org/bots/tutorial)
