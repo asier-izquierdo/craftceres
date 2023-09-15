@@ -1,18 +1,16 @@
-###########################################################################################
-# The following are necessary variables that need to be set for a proper execution.       #
-# Do not use "/" after a directory (i.e. /home/user).                                     #
-# `tmux_session_path` is usually found at '/tmp/tmux-<UID_of_the_invoker>/default'        #
-###########################################################################################
+# Required settings
 
-papermc_path="<path to the papermc.jar parent directory>"
-tmux_session_name="<name of the tmux session where papermc is running>"
-tmux_session_path="<path to the tmux session location>"
+papermc:  
+  path: <path to the papermc.jar parent directory>
+tmux_session:
+  name: <name of the tmux session where papermc is running>
+  path: <path to the tmux session location>'
 
-###########################################################################################
-# Setting the corresponding values will enable the reporter, otherwise it will just show  #
-# a warning, indicating that it is not enabled.                                           #
-# Only 'TOKEN' should be replaced with the API token the BotFather generated              #
-###########################################################################################
+# Optional settings
 
-# bot_url="https://api.telegram.org/botTOKEN/sendMessage"
-# chat_id="<ID of the chat with the bot>"
+world_reset:
+  enabled: <yes/no>
+telegram_reporter:
+  enabled: <yes/no>
+  id: <ID of the chat with the bot>
+  token: <JUST the token found on the bot's URL (https://api.telegram.org/botTOKEN/sendMessage)>
