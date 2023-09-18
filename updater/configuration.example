@@ -7,7 +7,8 @@ tmux_session:
   path: <path to the tmux session location>'
 
 # Optional settings
-
+auto_download:
+  enabled: <yes/no>
 world_reset:
   enabled: <yes/no>
 telegram_reporter:
