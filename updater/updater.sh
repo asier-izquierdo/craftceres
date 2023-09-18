@@ -203,7 +203,7 @@ get() {
         if [[ ($? != 0) || (-z "$$1") ]]
         then    
 
-                # If the error comes from 'current_build', tries to download the latest papermc version
+                # If the error comes from 'current_build', it does not stop the script to try to download it later on
                 if [[ $1 -eq "current_build" ]]
                 then    handler "WARNING" 6 "Could not determine '$1'."  
                 else    handler "ERROR" 6 "Could not determine '$1'."
@@ -322,7 +322,7 @@ then
         else    handler "ERROR" 6 "Could not determine 'current_build'."
         fi
         
-elif  [[ "$auto_download_enabled" == "yes" ]]
+elif  [[ $auto_download_enabled -eq "yes" ]]
 then    download_latest_build
 else    handler "ERROR" 6 "Could not determine 'current_build'."
 fi
