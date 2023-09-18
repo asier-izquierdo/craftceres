@@ -182,53 +182,6 @@ local missing=()
 return 0
 }
 
-# Fetches the latest build and archives the previous one
-download_latest_build() {
-        handler "INFO" 0 "Downloading the latest PaperMC build..."
-
-        wget -q $LATEST_BUILD_LINK -P $papermc_path
-
-        if [ $? -ne 0 ]
-        then    handler "ERROR" 7 "The latest PaperMC build could not be downloaded."
-        else
-
-                if [ -n "$current_build" ]
-                then
-                        handler "INFO" 0 "Archiving previous build..."
-
-                        mv $papermc_path/paper-*-$current_build.jar $ARCHIVE
-
-                        if [ $? -eq 0 ]
-                        then    handler "INFO" 0 "Successfully moved the previous build to the archive."
-                        else    handler "WARNING" 13 "Could not move the previous build to the archive."
-                        fi
-
-                fi
-
-        fi
-
-return 0
-}
-
-auto_download() {
-
- # If the script is being executed manually, it asks for permission, else it checks for the 'auto_download' option in the updater.conf file
-if [ -n '$PS1' ]
-then
-        handler "WARNING" 6 "Could not determine '$1'."
-        read -p "Would you like to download the latest 'papermc' version? (y/n)" autodownl
-        if [[ ($autodownl -eq "y") || ($autodownl -eq "yes") ]]
-        then    download_latest_build
-        else    exit 6
-        fi
-        
-elif  [[ $auto_download -eq "yes" ]]
-then    download_latest_build
-else    handler "ERROR" 6 "Could not determine '$1'."
-fi
-                
-}
-
 # Gets the current local PaperMC, Minecraft, and available PaperMC versions
 get() {
 
@@ -252,12 +205,38 @@ get() {
 
                 # If the error comes from 'current_build', tries to download the latest papermc version
                 if [[ $1 -eq "current_build" ]]
-                then
-                        auto_download "$1"
-                        get "current_build"
+                then    handler "WARNING" 6 "Could not determine '$1'."  
                 else    handler "ERROR" 6 "Could not determine '$1'."
                 fi
                 
+        fi
+
+return 0
+}
+
+# Fetches the latest build and archives the previous one
+download_latest_build() {
+        handler "INFO" 0 "Downloading the latest PaperMC build..."
+
+        wget -q $LATEST_BUILD_LINK -P $papermc_path
+
+        if [ $? -ne 0 ]
+        then    handler "ERROR" 7 "The latest PaperMC build could not be downloaded."
+        else
+
+                if [ -n "$current_build" ]
+                then
+                        handler "INFO" 0 "Archiving previous build..."
+
+                        mv $papermc_path/paper-*-$current_build.jar $ARCHIVE
+
+                        if [ $? -eq 0 ]
+                        then    handler "INFO" 0 "Successfully moved the previous build to the archive."
+                        else    handler "WARNING" 13 "Could not move the previous build to the archive."
+                        fi
+
+                fi
+
         fi
 
 return 0
@@ -332,6 +311,24 @@ function parse_yaml {
    }'
 }
 
+ # If the script is being executed manually, it asks for permission, else it checks for the 'auto_download' option in the updater.conf file
+auto_download() {
+
+if [ -n '$PS1' ]
+then
+        read -p "Would you like to download the latest 'papermc' version? (y/n)" autodownl
+        if [[ ($autodownl -eq "y") || ($autodownl -eq "yes") ]]
+        then    download_latest_build
+        else    exit 6
+        fi
+        
+elif  [[ $auto_download -eq "yes" ]]
+then    download_latest_build
+else    handler "ERROR" 6 "Could not determine '$1'."
+fi
+                
+}
+
 # ######################### #
 # Start of script execution #
 # ######################### #
@@ -357,8 +354,8 @@ check_input $tmux_session_name "<tmuxsession>"
 
 get "mc_version"
 get "latest_build"
-LATEST_BUILD_LINK="$PAPER_API_URL/versions/$mc_version/builds/$latest_build/downloads/paper-$mc_version-$latest_build.jar"
 get "current_build"
+LATEST_BUILD_LINK="$PAPER_API_URL/versions/$mc_version/builds/$latest_build/downloads/paper-$mc_version-$latest_build.jar"
 
 # Creates the archive directory to store the previously used PaperMC build if it doesn't already exist
 if [ ! -d $ARCHIVE ]
@@ -390,7 +387,11 @@ then
         else    handler "WARNING" 12 "The PaperMC server was not running."
         fi
 
-        download_latest_build
+        if [ -z "$current_build" ]
+        then    auto_download
+        elif [ $current_build -lt $latest_build ]
+        then    download_latest_build
+        fi
 
         if [ -f $papermc_path/paper-$mc_version-$latest_build.jar ]
         then
