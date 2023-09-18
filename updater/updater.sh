@@ -322,7 +322,7 @@ then
         else    handler "ERROR" 6 "Could not determine 'current_build'."
         fi
         
-elif  [[ $auto_download -eq "yes" ]]
+elif  [[ "$auto_download" == "yes" ]]
 then    download_latest_build
 else    handler "ERROR" 6 "Could not determine 'current_build'."
 fi
