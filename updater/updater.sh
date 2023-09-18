@@ -182,31 +182,6 @@ local missing=()
 return 0
 }
 
-# Gets the current local PaperMC, Minecraft, and available PaperMC versions
-get() {
-
-        case $1 in
-        mc_version)
-                handler "INFO" 0 "Fetching current Minecraft version..."
-                mc_version=$(curl -s $PAPER_API_URL | grep -Eo $MC_VERSION_REGEX | sort -r | head -1)
-                ;;
-        latest_build)
-                handler "INFO" 0 "Fetching latest available PaperMC build..."
-                latest_build=$(curl -s "$PAPER_API_URL/versions/$mc_version" | jq -r '.builds[]' | sort -rn | head -1)
-                ;;
-        current_build)
-                handler "INFO" 0 "Checking currently used PaperMC build..."
-                current_build=$(find $papermc_path -name "paper-*" -maxdepth 1 2> /dev/null | grep -Eo "[0-9]\-$BUILD_NUMBER_REGEX\." | grep -Eo "$BUILD_NUMBER_REGEX\." | grep -Eo "$BUILD_NUMBER_REGEX")
-                ;;
-        esac
-
-        if [[ ($? != 0) || (-z "$$1") ]]
-        then    handler "ERROR" 6 "Could not determine '$1'."
-        fi
-
-return 0
-}
-
 # Fetches the latest build and archives the previous one
 download_latest_build() {
         handler "INFO" 0 "Downloading the latest PaperMC build..."
@@ -230,6 +205,59 @@ download_latest_build() {
 
                 fi
 
+        fi
+
+return 0
+}
+
+auto_download() {
+
+ # If the script is being executed manually, it asks for permission, else it checks for the 'auto_download' option in the updater.conf file
+if [ -n '$PS1' ]
+then
+        handler "WARNING" 6 "Could not determine '$1'."
+        read -p "Would you like to download the latest 'papermc' version? (y/n)" autodownl
+        if [[ ($autodownl -eq "y") || ($autodownl -eq "yes") ]]
+        then    download_latest_build
+        else    exit 6
+        fi
+        
+elif  [[ $auto_download -eq "yes" ]]
+then    download_latest_build
+else    handler "ERROR" 6 "Could not determine '$1'."
+fi
+                
+}
+
+# Gets the current local PaperMC, Minecraft, and available PaperMC versions
+get() {
+
+        case $1 in
+        mc_version)
+                handler "INFO" 0 "Fetching current Minecraft version..."
+                mc_version=$(curl -s $PAPER_API_URL | grep -Eo $MC_VERSION_REGEX | sort -r | head -1)
+                ;;
+        latest_build)
+                handler "INFO" 0 "Fetching latest available PaperMC build..."
+                latest_build=$(curl -s "$PAPER_API_URL/versions/$mc_version" | jq -r '.builds[]' | sort -rn | head -1)
+                ;;
+        current_build)
+                handler "INFO" 0 "Checking currently used PaperMC build..."
+                current_build=$(find $papermc_path -name "paper-*" -maxdepth 1 2> /dev/null | grep -Eo "[0-9]\-$BUILD_NUMBER_REGEX\." | grep -Eo "$BUILD_NUMBER_REGEX\." | grep -Eo "$BUILD_NUMBER_REGEX")
+                ;;
+        esac
+
+        if [[ ($? != 0) || (-z "$$1") ]]
+        then    
+
+                # If the error comes from 'current_build', tries to download the latest papermc version
+                if [[ $1 -eq "current_build" ]]
+                then
+                        auto_download "$1"
+                        get "current_build"
+                else    handler "ERROR" 6 "Could not determine '$1'."
+                fi
+                
         fi
 
 return 0
