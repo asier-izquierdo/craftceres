@@ -316,8 +316,8 @@ auto_download() {
 
 if [ -n '$PS1' ]
 then
-        read -p "Would you like to download the latest 'papermc' version? (y/n)" autodownl
-        if [[ ($autodownl -eq "y") || ($autodownl -eq "yes") ]]
+        read -p "Would you like to download the latest 'papermc' version? (y/n) " autodownl
+        if [[ ("$autodownl" == "y") || ("$autodownl" == "yes") ]]
         then    download_latest_build
         else    exit 6
         fi
