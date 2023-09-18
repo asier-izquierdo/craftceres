@@ -319,12 +319,12 @@ then
         read -p "Would you like to download the latest 'papermc' version? (y/n) " autodownl
         if [[ ("$autodownl" == "y") || ("$autodownl" == "yes") ]]
         then    download_latest_build
-        else    exit 6
+        else    handler "ERROR" 6 "Could not determine 'current_build'."
         fi
         
 elif  [[ $auto_download -eq "yes" ]]
 then    download_latest_build
-else    handler "ERROR" 6 "Could not determine '$1'."
+else    handler "ERROR" 6 "Could not determine 'current_build'."
 fi
                 
 }
