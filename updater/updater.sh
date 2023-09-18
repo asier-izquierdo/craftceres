@@ -357,8 +357,8 @@ check_input $tmux_session_name "<tmuxsession>"
 
 get "mc_version"
 get "latest_build"
-get "current_build"
 LATEST_BUILD_LINK="$PAPER_API_URL/versions/$mc_version/builds/$latest_build/downloads/paper-$mc_version-$latest_build.jar"
+get "current_build"
 
 # Creates the archive directory to store the previously used PaperMC build if it doesn't already exist
 if [ ! -d $ARCHIVE ]
