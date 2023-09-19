@@ -317,13 +317,13 @@ auto_download() {
 if [ -n '$PS1' ]
 then
 
-        while [[ -z $n || $n == "y" || $n == "n" ]]
+        while [[ -z $n || $n != "y" || $n != "n" ]]
         do
                 echo -e "Would you like to download the latest 'papermc' version? (y/n)\n"
                 read n;
         done
 
-        if [[ ("$autodownl" == "y") ]]
+        if [[ ($n == "y") ]]
         then    download_latest_build
         else    handler "ERROR" 6 "Could not determine 'current_build'."
         fi
