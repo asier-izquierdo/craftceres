@@ -319,15 +319,18 @@ then
 
         while [[ -z $n || ($n != "y" && $n != "n") ]]
         do
-                echo -e "Would you like to download the latest 'papermc' version? (y/n)\n"
+                # Repeats the question until 'y' or 'n' is sent
+                echo -e "Would you like to download the latest 'papermc' version? (y/n)"
                 read n;
         done
 
+        # If 'y' was selected, it downloads the latest build; else if 'n' was selected, it exits with error 6
         if [[ ($n == "y") ]]
         then    download_latest_build
         else    handler "ERROR" 6 "Could not determine 'current_build'."
         fi
-        
+
+# Checks if the user enabled the option to automatically download the latest build, else it exits with error 6
 elif  [[ $auto_download_enabled -eq "yes" ]]
 then    download_latest_build
 else    handler "ERROR" 6 "Could not determine 'current_build'."
@@ -393,12 +396,15 @@ then
         else    handler "WARNING" 12 "The PaperMC server was not running."
         fi
 
+        # If the current build couldn't previously be determined, it calls the auto_download, else it checks wether it is
+        # a lesser version that needs to be updated or if there were no available updates
         if [ -z "$current_build" ]
         then    auto_download
         elif [ $current_build -lt $latest_build ]
         then    download_latest_build
         fi
 
+        # If a new version has been downloaded with either of the previous functions, it attempts to start the server using it
         if [ -f $papermc_path/paper-$mc_version-$latest_build.jar ]
         then
                 server_starter "latest" $latest_build
