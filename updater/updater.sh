@@ -317,11 +317,10 @@ auto_download() {
 if [ -n '$PS1' ]
 then
 
-        while
+        while [[ -z $n || $n == "y" || $n == "n" ]]
+        do
                 echo -e "Would you like to download the latest 'papermc' version? (y/n)\n"
-                read n
-                [[ -z $n || $n == "y" || $n == "n" ]]
-        do true;
+                read n;
         done
 
         if [[ ("$autodownl" == "y") ]]
