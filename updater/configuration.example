@@ -2,16 +2,21 @@
 
 papermc:  
   path: <path to the papermc.jar parent directory>
+
 tmux_session:
   name: <name of the tmux session where papermc is running>
   path: <path to the tmux session location>'
 
+
 # Optional settings
+
 auto_download:
   enabled: <yes/no>
-world_reset:
-  enabled: <yes/no>
+
 telegram_reporter:
   enabled: <yes/no>
   id: <ID of the chat with the bot>
   token: <JUST the token found on the bot's URL (https://api.telegram.org/botTOKEN/sendMessage)>
+
+world_reset:
+  enabled: <yes/no>
