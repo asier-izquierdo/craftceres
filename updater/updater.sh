@@ -25,7 +25,7 @@ ARCHIVE="$papermc_path/archive"
 reporter() {
 
         # Check if the Telegram reporter is enabled
-        if [[ ( $telegram_reporter_enabled = "yes" ) ]]
+        if [[ ( $telegram_reporter_enabled == "yes" ) ]]
         then
 
                 # Check if telegram_reporter_token and telegram_reporter_id are set
@@ -106,9 +106,9 @@ log_entry() {
         fi
 
         # Verbose progress and errors instead of logging them if the execution is manual instead of a cron job
-        if [ $exec_mode = "manual" ]
+        if [ $exec_mode == "manual" ]
         then    echo -e "$entry"
-        elif [ $exec_mode = "auto" ]
+        elif [ $exec_mode == "auto" ]
         then    echo -e "$entry" >> $LOG
         fi
 
@@ -211,7 +211,7 @@ get() {
         then    
 
                 # If the error comes from 'current_build', it does not stop the script to try to download it later on
-                if [[ $1 -eq "current_build" ]]
+                if [[ $1 == "current_build" ]]
                 then    handler "WARNING" 6 "Could not determine '$1'."  
                 else    handler "ERROR" 6 "Could not determine '$1'."
 fi
@@ -230,7 +230,7 @@ download_latest_build() {
         if [ $? -ne 0 ]
         then
 
-                if [ $2 = "nd" ]
+                if [ $2 == "nd" ]
                 then 
                         handler "ERROR" 11 "The latest PaperMC build could not be downloaded AND there is no other version installed. Exiting."
 
@@ -239,7 +239,7 @@ download_latest_build() {
 
         else
 
-                if [ $2 = "nd" ]
+                if [ $2 == "nd" ]
                 then
                         handler "INFO" 0 "Saving newly downloaded build as current build since it could not be determined before."
                         current_build=$(find $papermc_path -name "paper-*" -maxdepth 1 2> /dev/null | grep -Eo "[0-9]\-$BUILD_NUMBER_REGEX\." | grep -Eo "$BUILD_NUMBER_REGEX\." | grep -Eo "$BUILD_NUMBER_REGEX")
