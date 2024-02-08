@@ -3,6 +3,12 @@
 # Determines the absoulte path in which the script is located
 SCRIPT_DIR=$(dirname ${BASH_SOURCE[0]})
 
+# Determines wether the script is being run manually or not
+if [ -n '$PS1' ]
+        then    exec_mode = "manual"
+        else    exec_mode = "auto"
+fi
+
 # Constants, ordered by likeliness of change
 PAPER_API_URL="https://api.papermc.io/v2/projects/paper"
 MC_VERSION_REGEX="1\.[0-9]{2}\.{0,1}[0-9]{0,2}"
@@ -19,7 +25,7 @@ ARCHIVE="$papermc_path/archive"
 reporter() {
 
         # Check if the Telegram reporter is enabled
-        if [[ ( $telegram_reporter_enabled -eq "yes" ) ]]
+        if [[ ( $telegram_reporter_enabled = "yes" ) ]]
         then
 
                 # Check if telegram_reporter_token and telegram_reporter_id are set
@@ -100,9 +106,10 @@ log_entry() {
         fi
 
         # Verbose progress and errors instead of logging them if the execution is manual instead of a cron job
-        if [ -n '$PS1' ]
+        if [ $exec_mode = "manual" ]
         then    echo -e "$entry"
-        else    echo -e "$entry" >> $LOG
+        elif [ $exec_mode = "auto" ]
+        then    echo -e "$entry" >> $LOG
         fi
 
 return 0
@@ -207,7 +214,7 @@ get() {
                 if [[ $1 -eq "current_build" ]]
                 then    handler "WARNING" 6 "Could not determine '$1'."  
                 else    handler "ERROR" 6 "Could not determine '$1'."
-                fi
+fi
                 
         fi
 
@@ -218,13 +225,26 @@ return 0
 download_latest_build() {
         handler "INFO" 0 "Downloading the latest PaperMC build..."
 
-        wget -q $LATEST_BUILD_LINK -P $papermc_path
+        wget -q $1 -P $papermc_path
 
         if [ $? -ne 0 ]
-        then    handler "ERROR" 7 "The latest PaperMC build could not be downloaded."
+        then
+
+                if [ $2 = "nd" ]
+                then 
+                        handler "ERROR" 11 "The latest PaperMC build could not be downloaded AND there is no other version installed. Exiting."
+
+                else    handler "ERROR" 7 "The latest PaperMC build could not be downloaded."
+                fi
+
         else
 
-                if [ -n "$current_build" ]
+                if [ $2 = "nd" ]
+                then
+                        handler "INFO" 0 "Saving newly downloaded build as current build since it could not be determined before."
+                        current_build=$(find $papermc_path -name "paper-*" -maxdepth 1 2> /dev/null | grep -Eo "[0-9]\-$BUILD_NUMBER_REGEX\." | grep -Eo "$BUILD_NUMBER_REGEX\." | grep -Eo "$BUILD_NUMBER_REGEX")
+                
+                elif [ -n "$current_build" ]
                 then
                         handler "INFO" 0 "Archiving previous build..."
 
@@ -311,33 +331,6 @@ function parse_yaml {
    }'
 }
 
- # If the script is being executed manually, it asks for permission, else it checks for the 'auto_download' option in the updater.conf file
-auto_download() {
-
-if [ -n '$PS1' ]
-then
-
-        while [[ -z $n || ($n != "y" && $n != "n") ]]
-        do
-                # Repeats the question until 'y' or 'n' is sent
-                echo -e "Would you like to download the latest 'papermc' version? (y/n)"
-                read n;
-        done
-
-        # If 'y' was selected, it downloads the latest build; else if 'n' was selected, it exits with error 6
-        if [[ ($n == "y") ]]
-        then    download_latest_build
-        else    handler "ERROR" 6 "Could not determine 'current_build'."
-        fi
-
-# Checks if the user enabled the option to automatically download the latest build, else it exits with error 6
-elif  [[ $auto_download_enabled -eq "yes" ]]
-then    download_latest_build
-else    handler "ERROR" 6 "Could not determine 'current_build'."
-fi
-                
-}
-
 # ######################### #
 # Start of script execution #
 # ######################### #
@@ -364,6 +357,8 @@ check_input $tmux_session_name "<tmuxsession>"
 get "mc_version"
 get "latest_build"
 get "current_build"
+
+# Despite being a constant, it can't be defined before giving meaning to "mc_version" and "latest_build"
 LATEST_BUILD_LINK="$PAPER_API_URL/versions/$mc_version/builds/$latest_build/downloads/paper-$mc_version-$latest_build.jar"
 
 # Creates the archive directory to store the previously used PaperMC build if it doesn't already exist
@@ -384,6 +379,11 @@ fi
 if [ -z "$current_build" ] || [ $current_build -lt $latest_build ]
 then
 
+        if [ -z "$current_build" ]
+        then download_latest_build $LATEST_BUILD_LINK "nd"
+        else download_latest_build $LATEST_BUILD_LINK
+        fi
+
         if [ -n "$(pidof java)" ]
         then
                 server_stopper
@@ -396,15 +396,6 @@ then
         else    handler "WARNING" 12 "The PaperMC server was not running."
         fi
 
-        # If the current build couldn't previously be determined, it calls the auto_download, else it checks wether it is
-        # a lesser version that needs to be updated or if there were no available updates
-        if [ -z "$current_build" ]
-        then    auto_download
-        elif [ $current_build -lt $latest_build ]
-        then    download_latest_build
-        fi
-
-        # If a new version has been downloaded with either of the previous functions, it attempts to start the server using it
         if [ -f $papermc_path/paper-$mc_version-$latest_build.jar ]
         then
                 server_starter "latest" $latest_build
@@ -417,7 +408,7 @@ then
                         handler "ERROR" 10 "The server failed to start using the latest PaperMC build."
                 fi
 
-        else    handler "ERROR" 11 "The latest PaperMC version could not be found on the system."
+        else    handler "ERROR" 12 "The latest PaperMC version could not be found on the system."
         fi
 
         handler "INFO" 0 "The PaperMC server has successfully been updated and restarted."

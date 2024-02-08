@@ -10,13 +10,10 @@ tmux_session:
 
 # Optional settings
 
-auto_download:
+world_reset:
   enabled: <yes/no>
 
 telegram_reporter:
   enabled: <yes/no>
   id: <ID of the chat with the bot>
   token: <JUST the token found on the bot's URL (https://api.telegram.org/botTOKEN/sendMessage)>
-
-world_reset:
-  enabled: <yes/no>
