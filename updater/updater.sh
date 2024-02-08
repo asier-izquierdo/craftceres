@@ -268,7 +268,7 @@ unclutterer() {
 
         local count=$(ls -l $ARCHIVE | grep "paper-*" | wc -l)
 
-        if [ $count -gt 1 ]
+        if [ $count -gt 0 ]
         then
                 # Gets the whole file name of the oldest and the newest files on the archive
                 local oldest=$(ls $ARCHIVE | sort -rV | grep 'paper-*' | tail -1)
