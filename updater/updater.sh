@@ -266,7 +266,7 @@ return 0
 unclutterer() {
         handler "INFO" 0 "Checking if there is any surplus on the archive..."
 
-        local count=$(ls -l $ARCHIVE | wc -l)
+        local count=$(ls -l $ARCHIVE | grep "paper-*" | wc -l)
 
         if [ $count -gt 1 ]
         then
