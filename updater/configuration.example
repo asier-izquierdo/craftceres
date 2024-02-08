@@ -1,4 +1,4 @@
-# Required settings
+## Required settings ##
 
 papermc:  
   path: <path to the papermc.jar parent directory>
@@ -8,7 +8,7 @@ tmux_session:
   path: <path to the tmux session location>'
 
 
-# Optional settings
+## Optional settings ##
 
 world_reset:
   enabled: <yes/no>
