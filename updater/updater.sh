@@ -5,8 +5,8 @@ SCRIPT_DIR=$(dirname ${BASH_SOURCE[0]})
 
 # Determines wether the script is being run manually or not
 if [ -n '$PS1' ]
-        then    exec_mode = "manual"
-        else    exec_mode = "auto"
+        then    exec_mode="manual"
+        else    exec_mode="auto"
 fi
 
 # Constants, ordered by likeliness of change
