@@ -1,4 +1,4 @@
-fetch('https://api.mcstatus.io/v2/status/java/mc.craftceres.xyz')
+fetch('https://api.mcstatus.io/v2/status/java/mc.craftceres.cc')
     .then((response) => {
         if (response.ok) {
           return response.json();
