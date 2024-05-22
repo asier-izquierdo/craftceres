@@ -1,6 +1,9 @@
 #! /bin/bash
 
 # This script checks wether the Java server is running to notify in the event of a failure
+# this file should be duplicated with another/no extension before editing, as this .exmple
+# is intended to act as a template.
+
 ADMIN="<Admin's UID to mention>"
 WH_URL="<Discord's WebHook URL"
 
