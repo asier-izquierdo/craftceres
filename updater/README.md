@@ -11,7 +11,7 @@ The Updater relies on the following packages to work:[^1]
  - `curl`
  - `jq`[^3]
  - `wget`
- - [`Java 17 Amazon Coretto`](https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html)
+ - [`Java 21 Amazon Coretto`](https://docs.aws.amazon.com/corretto/latest/corretto-21-ug/downloads-list.html)
 
 [^1]:Note that it will not work **at all** if they are not present in the system, exiting with the corresponding error.
 [^2]:Both the Updater and the Backer assume you use a `tmux` session for the server, not only because that's how _I_ have set it up, but because the only way to interact with a running Java server and see previous logs in its console (from other devices) is through a terminal multiplexer.
