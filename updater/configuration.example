@@ -16,7 +16,7 @@ world_reset:
 discord_reporter:
   enabled: <yes/no>
   webhook: <Discord's WebHook URL>
-  adminid: <Admin's UID to mention.>
+  adminid: <Admin's UID to mention>
 
 telegram_reporter:
   enabled: <yes/no>
