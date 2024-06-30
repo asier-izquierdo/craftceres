@@ -35,18 +35,18 @@ reporter() {
                         case $1 in
                         OK)
                                 local payload=$(cat <<EOF
-                                {
-                                "content": "The Updater executed$2"
-                                }
-                                EOF
+{
+        "content": "The Updater executed$2"
+}
+EOF
                                 )
                                 ;;
                         NOT)
                                 local payload=$(cat <<EOF
-                                {
-                                "content": "The Updater executed; however, there has been a problem. Here is the log entry:\n\n$2"
-                                }
-                                EOF
+{
+        "content": "The Updater executed; however, there has been a problem. Here is the log entry:\n\n$2"
+}
+EOF
                                 )
                                 ;;
                         esac
