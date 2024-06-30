@@ -5,7 +5,7 @@
 # is intended to act as a template.
 
 ADMIN="<Admin's UID to mention>"
-WH_URL="<Discord's WebHook URL"
+WH_URL="<Discord's WebHook URL>"
 
 send_notification() {
   

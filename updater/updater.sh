@@ -21,8 +21,41 @@ ARCHIVE="$papermc_path/archive"
 # Start of optional functions #
 # ########################### #
 
-# Sends a message to Telegram reporting the script's outcome.
+# Sends a message to Discord or Telegram reporting the script's outcome.
 reporter() {
+
+        # Check if the Discord reporter is enabled
+        if [[ ( $discord_reporter_enabled == "yes" ) ]]
+        then
+
+                # Check if discord_reporter_webhook is set
+                if [[ (-n $discord_reporter_webhook) ]]
+                then
+
+                        case $1 in
+                        OK)
+                                local payload=$(cat <<EOF
+                                {
+                                "content": "The Updater executed$2"
+                                }
+                                EOF
+                                )
+                                ;;
+                        NOT)
+                                local payload=$(cat <<EOF
+                                {
+                                "content": "The Updater executed; however, there has been a problem. Here is the log entry:\n\n$2"
+                                }
+                                EOF
+                                )
+                                ;;
+                        esac
+
+                        curl -H "Content-Type: application/json" -X POST -d "$payload" $discord_reporter_webhook >/dev/null 2>&1
+                else    handler "WARNING" 17 "The reporter is not correctly enabled. Please, set <discord_reporter_webhook>. No notifications were sent."
+                fi
+
+        fi
 
         # Check if the Telegram reporter is enabled
         if [[ ( $telegram_reporter_enabled == "yes" ) ]]

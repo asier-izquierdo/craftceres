@@ -13,6 +13,11 @@ tmux_session:
 world_reset:
   enabled: <yes/no>
 
+discord_reporter:
+  enabled: <yes/no>
+  webhook: <Discord's WebHook URL>
+  adminid: <Admin's UID to mention>
+
 telegram_reporter:
   enabled: <yes/no>
   id: <ID of the chat with the bot>
