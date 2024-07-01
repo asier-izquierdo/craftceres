@@ -4,12 +4,12 @@
 # this file should be duplicated with another/no extension before editing, as this .exmple
 # is intended to act as a template.
 
-ADMIN="<Admin's UID to mention>"
-WH_URL="<Discord's WebHook URL>"
-UPDATER_DIR=""
-
 # Determines the absoulte path in which the updater script is located
 SCRIPT_DIR=$(dirname ${BASH_SOURCE[0]})
+
+ADMIN="<Admin's UID to mention>"
+WH_URL="<Discord's WebHook URL>"
+UPDATER_DIR="<updater.sh parent directory>"
 
 flagdir="$SCRIPT_DIR/.hflag"
 
