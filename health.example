@@ -14,7 +14,7 @@ UPDATER_DIR="<updater.sh parent directory>"
 flagdir="$SCRIPT_DIR/.hflag"
 
 # Creates the flag dotfile if it doesn't exist. 0 allows notifications and 1 doesn't.
-if [ ! -f $flagdir || ! -f "$UPDATER_DIR/.hflag" ]
+if [[ ! -f $flagdir || ! -f "$UPDATER_DIR/.hflag" ]]
 then
   echo "flag="0"" > $flagdir
   ln -s $flagdir $UPDATER_DIR/.hflag
@@ -43,6 +43,6 @@ then
     echo "flag="1"" > $flagdir
   fi
 
-elif [ -n "$(pidof java)" && $flag -eq 1 ]
+elif [[ -n "$(pidof java)" && $flag -eq 1 ]]
 then echo "flag="0"" > $flagdir
 fi
