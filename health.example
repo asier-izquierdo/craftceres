@@ -6,6 +6,21 @@
 
 ADMIN="<Admin's UID to mention>"
 WH_URL="<Discord's WebHook URL>"
+UPDATER_DIR=""
+
+# Determines the absoulte path in which the updater script is located
+SCRIPT_DIR=$(dirname ${BASH_SOURCE[0]})
+
+flagdir="$SCRIPT_DIR/.hflag"
+
+# Creates the flag dotfile if it doesn't exist. 0 allows notifications and 1 doesn't.
+if [ ! -f $flagdir || ! -f "$UPDATER_DIR/.hflag" ]
+then
+  echo "flag="0"" > $flagdir
+  ln -ls $flagdir $UPDATER_DIR/.hflag
+fi
+
+source $flagdir
 
 send_notification() {
   
@@ -20,5 +35,14 @@ EOF
 }
 
 if [ -z "$(pidof java)" ]
-    then send_notification   
+then
+
+  if [ $flag -eq 0 ]
+  then
+    send_notification
+    echo "flag="1"" > $flagdir
+  fi
+
+elif [ -n "$(pidof java)" && $flag -eq 1 ]
+then echo "flag="0"" > $flagdir
 fi

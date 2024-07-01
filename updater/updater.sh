@@ -16,6 +16,7 @@ BUILD_NUMBER_REGEX="[0-9]{1,4}"
 LOG="$SCRIPT_DIR/updater.log"
 CONF="$SCRIPT_DIR/updater.conf"
 ARCHIVE="$papermc_path/archive"
+FLAGDIR="$SCRIPT_DIR/.hflag"
 
 # ########################### #
 # Start of optional functions #
@@ -368,7 +369,7 @@ function parse_yaml {
 # Start of script execution #
 # ######################### #
 
-# Checks if the configuration file is available, the even isn't logged because without the configuration, no log file is defined
+# Checks if the configuration file is available, the event isn't logged because without the configuration, no log file is defined
 if [[ ! -f $CONF ]]
 then    handler "ERROR" 1 "The configuration could not be found, this may be due to a wrongly defined path or to the file not existing. Please, provide a valid configuration path."    
 else    eval $(parse_yaml $CONF)
@@ -426,6 +427,8 @@ then
                 then    handler "ERROR" 9 "The server failed to stop."
                 fi
 
+                echo "flag="1"" > $FLAGDIR
+
         else    handler "WARNING" 12 "The PaperMC server was not running."
         fi
 
@@ -446,6 +449,7 @@ then
 
         handler "INFO" 0 "The PaperMC server has successfully been updated and restarted."
         reporter "OK" ", and the server has correctly been updated and restarted."
+        echo "flag="0"" > $FLAGDIR
         unclutterer
 else
         handler "INFO" 0 "There were no updates for the server."
