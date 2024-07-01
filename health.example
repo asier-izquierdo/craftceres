@@ -17,7 +17,7 @@ flagdir="$SCRIPT_DIR/.hflag"
 if [ ! -f $flagdir || ! -f "$UPDATER_DIR/.hflag" ]
 then
   echo "flag="0"" > $flagdir
-  ln -ls $flagdir $UPDATER_DIR/.hflag
+  ln -s $flagdir $UPDATER_DIR/.hflag
 fi
 
 source $flagdir
