@@ -10,6 +10,9 @@ tmux_session:
 
 ## Optional settings ##
 
+experimental_builds
+  enabled: <yes/no>
+
 world_reset:
   enabled: <yes/no>
 

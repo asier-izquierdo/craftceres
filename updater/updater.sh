@@ -415,7 +415,7 @@ then
 fi
 
 # Triggers the update process only if there's a newer version that is NOT experimental, or if the script couldn't find any existing version on the system
-if { [ "$current_build" -lt "$latest_build" ] && [ "$build_channel" == "default" ]; } || [ -z "$current_build" ]
+if { [ "$current_build" -lt "$latest_build" ] && { [ "$build_channel" == "default" ] || [ "$experimental_builds_enabled" == "yes" ]; }; } || [ -z "$current_build" ]
 then
 
         if [ -z "$current_build" ]
@@ -457,10 +457,10 @@ then
         echo "flag="0"" > $FLAGDIR
         unclutterer
 
-elif [ "$build_channel" == "experimental" ]
+elif [ "$build_channel" == "experimental" ] && [ "$experimental_builds_enabled" == "no" ]
 then
         handler "INFO" 0 "There is a newer version; however, it's still an experimental build."
-        reporter "OK" "; however, the updates found are still in an experimental state."
+        reporter "OK" "; however, the update found is still in an experimental state."
 
 else
         handler "INFO" 0 "There were no updates for the server."
