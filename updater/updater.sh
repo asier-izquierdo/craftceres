@@ -459,7 +459,7 @@ then
 
 elif [ "$build_channel" == "experimental" ]
 then
-        handler "INFO" 0 "There is a newer version, however, it's still an experimental build."
+        handler "INFO" 0 "There is a newer version; however, it's still an experimental build."
         reporter "OK" "; however, the updates found are still in an experimental state."
 
 else
