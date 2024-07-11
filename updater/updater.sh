@@ -11,8 +11,6 @@ fi
 
 # Constants, ordered by likeliness of change
 PAPER_API_URL="https://api.papermc.io/v2/projects/paper"
-PAPER_API_VERSION_URL="$PAPER_API_URL/versions/$mc_version"
-PAPER_API_BUILD_URL="$PAPER_API_VERSION_URL/builds/$latest_build"
 MC_VERSION_REGEX="1\.[0-9]{2}\.{0,1}[0-9]{0,2}"
 BUILD_NUMBER_REGEX="[0-9]{1,4}"
 LOG="$SCRIPT_DIR/updater.log"
@@ -235,7 +233,7 @@ get() {
                 ;;
         latest_build)
                 handler "INFO" 0 "Fetching latest available PaperMC build..."
-                latest_build=$(curl -s "$PAPER_API_VERSION_URL" | jq -r '.builds[]' | sort -rn | head -1)
+                latest_build=$(curl -s "$PAPER_API_URL/versions/$mc_version" | jq -r '.builds[]' | sort -rn | head -1)
                 ;;
         current_build)
                 handler "INFO" 0 "Checking currently used PaperMC build..."
@@ -243,7 +241,7 @@ get() {
                 ;;
         build_channel)
                 handler "INFO" 0 "Checking if the latest available build is production ready..."
-                build_channel=$(curl -s "$PAPER_API_BUILD_URL" | jq -r '.channel')
+                build_channel=$(curl -s "$PAPER_API_URL/versions/$mc_version/builds/$latest_build" | jq -r '.channel')
                 ;;
         esac
 
@@ -417,7 +415,7 @@ then
 fi
 
 # Triggers the update process only if there's a newer version that is NOT experimental, or if the script couldn't find any existing version on the system
-if { [ $current_build -lt $latest_build ] && [ "$build_channel" == "default" ]; } || [ -z "$current_build" ]
+if { [ "$current_build" -lt "$latest_build" ] && [ "$build_channel" == "default" ]; } || [ -z "$current_build" ]
 then
 
         if [ -z "$current_build" ]
