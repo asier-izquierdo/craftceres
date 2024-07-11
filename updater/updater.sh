@@ -11,6 +11,8 @@ fi
 
 # Constants, ordered by likeliness of change
 PAPER_API_URL="https://api.papermc.io/v2/projects/paper"
+PAPER_API_VERSION_URL="$PAPER_API_URL/versions/$mc_version"
+PAPER_API_BUILD_URL="$PAPER_API_VERSION_URL/builds/$latest_build"
 MC_VERSION_REGEX="1\.[0-9]{2}\.{0,1}[0-9]{0,2}"
 BUILD_NUMBER_REGEX="[0-9]{1,4}"
 LOG="$SCRIPT_DIR/updater.log"
@@ -223,21 +225,25 @@ local missing=()
 return 0
 }
 
-# Gets the current local PaperMC, Minecraft, and available PaperMC versions
+# Gets the current local PaperMC, Minecraft, and available PaperMC build numbers
 get() {
 
         case $1 in
         mc_version)
                 handler "INFO" 0 "Fetching current Minecraft version..."
-                mc_version=$(curl -s $PAPER_API_URL | grep -Eo $MC_VERSION_REGEX | sort -r | head -1)
+                mc_version=$(curl -s "$PAPER_API_URL" | grep -Eo $MC_VERSION_REGEX | sort -r | head -1)
                 ;;
         latest_build)
                 handler "INFO" 0 "Fetching latest available PaperMC build..."
-                latest_build=$(curl -s "$PAPER_API_URL/versions/$mc_version" | jq -r '.builds[]' | sort -rn | head -1)
+                latest_build=$(curl -s "$PAPER_API_VERSION_URL" | jq -r '.builds[]' | sort -rn | head -1)
                 ;;
         current_build)
                 handler "INFO" 0 "Checking currently used PaperMC build..."
                 current_build=$(find $papermc_path -name "paper-*" -maxdepth 1 2> /dev/null | grep -Eo "[0-9]\-$BUILD_NUMBER_REGEX\." | grep -Eo "$BUILD_NUMBER_REGEX\." | grep -Eo "$BUILD_NUMBER_REGEX")
+                ;;
+        build_channel)
+                handler "INFO" 0 "Checking if the latest available build is production ready..."
+                build_channel=$(curl -s "$PAPER_API_BUILD_URL" | jq -r '.channel')
                 ;;
         esac
 
@@ -391,6 +397,7 @@ check_input $tmux_session_name "<tmuxsession>"
 get "mc_version"
 get "latest_build"
 get "current_build"
+get "build_channel"
 
 # Despite being a constant, it can't be defined before giving meaning to "mc_version" and "latest_build"
 LATEST_BUILD_LINK="$PAPER_API_URL/versions/$mc_version/builds/$latest_build/downloads/paper-$mc_version-$latest_build.jar"
@@ -409,8 +416,8 @@ then
 
 fi
 
-# Checks if there's no installation or if the current is an older version in order to determine wether the updating process should trigger
-if [ -z "$current_build" ] || [ $current_build -lt $latest_build ]
+# Triggers the update process only if there's a newer version that is NOT experimental, or if the script couldn't find any existing version on the system
+if { [ $current_build -lt $latest_build ] && [ "$build_channel" == "default" ]; } || [ -z "$current_build" ]
 then
 
         if [ -z "$current_build" ]
@@ -451,6 +458,12 @@ then
         reporter "OK" ", and the server has correctly been updated and restarted."
         echo "flag="0"" > $FLAGDIR
         unclutterer
+
+elif [ "$build_channel" == "experimental" ]
+then
+        handler "INFO" 0 "There is a newer version, however, it's still an experimental build."
+        reporter "OK" "; however, the updates found are still in an experimental state."
+
 else
         handler "INFO" 0 "There were no updates for the server."
         reporter "OK" "; however, there were no updates for the server."
