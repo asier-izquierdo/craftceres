@@ -52,26 +52,32 @@ Under Red-Hat based distributions, the path usually is `/tmp/tmux-UID/default `,
 ```
 # Optional settings
 
-world_reset:
+experimental_builds:
   enabled: <yes/no>
+discord_reporter:
+  enabled: <yes/no>
+  webhook: <Discord's WebHook URL>
+  adminid: <Admin's UID to mention>
 telegram_reporter:
   enabled: <yes/no>
   id: <ID of the chat with the bot>
   token: <JUST the token found on the bot's URL (https://api.telegram.org/botTOKEN/sendMessage)>
 ```
-consists on optional features that can optionally be enabled: the Telegram reporter configuration, and the (yet unavailable) world reset option, whose descriptions you can find further below. The optional functions use an aditional parameter "enabled" to indicate wether to use it or not. The only understood value is "yes", and anything else including a blank space will be understood as not enabled.
+consists on optional features that can optionally be enabled: To allow experimental builds, the Discord reporter and the Telegram reporter configuration, whose descriptions you can find further below. The optional functions use an aditional parameter "enabled" to indicate wether to use it or not.
 
-The telegram reporter (described below), if enabled, needs all elements to be properly set in order for it to work.
+- The experimental buids option signals the script to use PaperMC's unstable builds. Enabling this option __is risky__ and performance problems and bugs are to be expected, nevertheless, it's convenient to have the option both for test purposes and demanding (although naive) users.
+
+### The Reporter
+
+There's an optional feature in the Updater[^4] which allows the script to send a message via WebHook for Discord or using your own Telegram bot[^5] that reports the status in which the script exited, that is, wether it successfully executed or if it exited due to an error.
+
+The Discord reporter doesn't need `adminid` unless the intention is to ping the admin and the current script doesn't since it mentions everyone (because the CraftCeres Discord has an administration channel for admins/mods). 
+
+The telegram reporter, needs all elements to be properly set in order for it to work.
 
 - `id` should contain the ID of the chat with the bot you created.
 - `token` should contain the API token for the bot, found in the URL with the format:\
 ~~(https://)api.telegram.org/bot~~TOKEN/~~sendMessage~~
-
----
-
-### The Reporter
-
-There's an optional feature in the Updater[^4] which allows the script to send a message through your own Telegram bot[^5] that reports the status in which the script exited, that is, wether it successfully executed or if it exited due to an error.
 
 [^4]:The definition of the corresponding paths as well as the enabling of the reporter should be made on the 'updater.cfg' file.
 [^5]:Creating a Telegram bot is a simple process that can be achieved following [their official tutorial](https://core.telegram.org/bots/tutorial)
