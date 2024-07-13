@@ -23,7 +23,7 @@ The Updater relies on the following packages to work:[^1]
 *The Updater uses the `updater.conf` file, which is in charge of defining the paths specific to each setup to best adapt to it. The reason behind using a separate file for this purpose is to seamlessly update the script without having to re-define the paths again. This file should be created by copying and renaming `configuration.example`.*
 
 The `configuration.example` file uses a YAML-like format, that the updater parses with [Stefan Farestam's YAML parser function](https://stackoverflow.com/questions/5014632/how-can-i-parse-a-yaml-file-from-a-linux-shell-script/21189044#21189044) through `sed` and `awk`.
-Intentation is very important, so you should not modify anything but the actual value, with a space between the ':' and the value itself.
+Indentation is very important, so you should not modify anything but the actual value, with a space between the ':' and the value itself.
 
 There are two sets of configuration groups, one required for the script to work, and the other optional to enable aditional features.
 
