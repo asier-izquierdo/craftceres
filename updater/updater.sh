@@ -444,14 +444,16 @@ then
 fi
 
 if {
-        # The version remains the same but there is a new build
-        { [[ "$latest" -eq "$current" ]] && [[ "$latest_build" -gt "$current_build" ]]; } ||
-                # Or there is a new version
-                { [[ "$latest" -gt "$current" ]] && {
-                        # That either is stable or is experimental but has been allowed
-                        [[ "$build_channel" == "default" ]] || [[ "$experimental_builds_enabled" == "yes" ]]
-                }
-        }; } ||
+
+        # There is a new version
+        { [[ "$latest" -gt "$current" ]] && {
+                # That either is stable or is experimental but has been allowed
+                [[ "$build_channel" == "default" ]] || [[ "$experimental_builds_enabled" == "yes" ]]
+                } ||
+                # Or the version remains the same but there is a new build
+                { [[ "$latest" -eq "$current" ]] && [[ "$latest_build" -gt "$current_build" ]]; }
+        }
+} ||
         # Or there is no previous installation
         [[ -z "$current_build" ]]
 
