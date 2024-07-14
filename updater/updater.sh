@@ -297,14 +297,14 @@ download_latest_build() {
         if [ $? -ne 0 ]
         then
 
-                if [ $2 == "nd" ]
+                if [[ "$2" == "nd" ]]
                 then handler "ERROR" 11 "The latest PaperMC build could not be downloaded AND there is no other version installed. Exiting."
                 else handler "ERROR" 7 "The latest PaperMC build could not be downloaded."
                 fi
 
         else
 
-                if [ $2 == "nd" ]
+                if [[ "$2" == "nd" ]]
                 then
                         handler "INFO" 0 "Saving newly downloaded build as current build since it could not be determined before."
                         current_build=$(find $papermc_path -name "paper-*" -maxdepth 1 2> /dev/null | grep -Eo "[0-9]\-$BUILD_NUMBER_REGEX\." | grep -Eo "$BUILD_NUMBER_REGEX\." | grep -Eo "$BUILD_NUMBER_REGEX")
