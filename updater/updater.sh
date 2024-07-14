@@ -450,7 +450,8 @@ if {
                 { [[ "$latest" -gt "$current" ]] && {
                         # That either is stable or is experimental but has been allowed
                         [[ "$build_channel" == "default" ]] || [[ "$experimental_builds_enabled" == "yes" ]]
-                }; } ||
+                }
+        }; } ||
         # Or there is no previous installation
         [[ -z "$current_build" ]]
 
