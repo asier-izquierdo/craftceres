@@ -269,7 +269,7 @@ normalize_versions() {
         local whole_current=$2
         local regex="^([0-9]+)\.([0-9]+)(\.([0-9]+))?$"
 
-        local normalize() {
+        normalize() {
 
                 if [[ $1 =~ $regex ]]
                 then
@@ -443,13 +443,28 @@ then
 
 fi
 
-# Triggers the update process only if there's a newer version that is NOT experimental, or if the script couldn't find any existing version on the system
-if { { [ "$latest" -eq "$current" ] && [ "$latest_build" -gt "$current_build" ]; }; || { [ "$latest" -gt "$current" ] && { [ "$build_channel" == "default" ] || [ "$experimental_builds_enabled" == "yes" ]; }; }; } || [ -z "$current_build" ]
+if {
+        # The version remains the same but there is a new build
+        { [[ "$latest" -eq "$current" ]] && [[ "$latest_build" -gt "$current_build" ]]; } ||
+                # Or there is a new version
+                { [[ "$latest" -gt "$current" ]] && {
+                        # That either is stable or is experimental but has been allowed
+                        [[ "$build_channel" == "default" ]] || [[ "$experimental_builds_enabled" == "yes" ]]
+                }; } ||
+        # Or there is no previous installation
+        [[ -z "$current_build" ]]
+
 then
 
         if [ -z "$current_build" ]
         then download_latest_build $LATEST_BUILD_LINK "nd"
-        else download_latest_build $LATEST_BUILD_LINK
+        else
+                if [[ "$build_channel" == "experimental" ]] && [[ "$experimental_builds_enabled" == "yes" ]]
+                then handler "INFO" 0 "The update found is in an EXPERIMENTAL state."       
+                fi
+
+                download_latest_build $LATEST_BUILD_LINK
+
         fi
 
         if [ -n "$(pidof java)" ]
