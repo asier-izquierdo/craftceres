@@ -18,7 +18,8 @@ world_reset:
 
 discord_reporter:
   enabled: <yes/no>
-  webhook: <Discord's WebHook URL>
+  webhook1: <Discord's WebHook URL>
+  webhook2: <A 2nd Discord WebHook>
   adminid: <Admin's UID to mention>
 
 telegram_reporter:

@@ -30,7 +30,7 @@ reporter() {
         then
 
                 # Check if discord_reporter_webhook is set
-                if [[ (-n $discord_reporter_webhook) ]]
+                if [[ (-n $discord_reporter_webhook1) ]]
                 then
 
                         case $1 in
@@ -52,8 +52,26 @@ EOF
                                 ;;
                         esac
 
-                        curl -H "Content-Type: application/json" -X POST -d "$payload" $discord_reporter_webhook >/dev/null 2>&1
-                else    handler "WARNING" 17 "The reporter is not correctly enabled. Please, set <discord_reporter_webhook>. No notifications were sent."
+                        curl -H "Content-Type: application/json" -X POST -d "$payload" $discord_reporter_webhook1 >/dev/null 2>&1
+                else    handler "WARNING" 17 "The reporter is not correctly enabled. Please, set <discord_reporter_webhook1>. No notifications were sent."
+                fi
+
+                if [[ (-n $discord_reporter_webhook2) ]]
+                then
+                
+                        case $1 in
+                        UPDATED)
+                                local payload=$(cat <<EOF
+{
+        "content": "¡El servidor se ha actualizado a la versión $mc_version, @everyone!"
+}
+EOF
+                                )
+                                curl -H "Content-Type: application/json" -X POST -d "$payload" $discord_reporter_webhook2 >/dev/null 2>&1
+                                ;;
+                        esac
+
+                else handler "WARNING" 17 "The reporter is not correctly enabled. Please, set <discord_reporter_webhook2>. No notifications were sent."
                 fi
 
         fi
@@ -497,6 +515,7 @@ then
 
         handler "INFO" 0 "The PaperMC server has successfully been updated and restarted."
         reporter "OK" ", and the server has correctly been updated and restarted."
+        reporter "UPDATED"
         echo "flag="0"" > $FLAGDIR
         unclutterer
 
