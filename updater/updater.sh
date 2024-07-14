@@ -106,78 +106,78 @@ server_stopper() {
 return 0
 }
 
-# Actually records entries to the log, plus colors them to easly differenciate severity
-log_entry() {
-        local timestamp=$(date +"%Y-%m-%d | %H:%M:%S")
-
-        # ANSI escape codes for colors
-        RED='\033[0;31m'
-        YELLOW='\033[1;33m'
-        GREEN='\033[0;32m'
-        NC='\033[0m' # No color
-
-        case $1 in
-        "ERROR")
-            color=$RED
-            ;;
-        "WARNING")
-            color=$YELLOW
-            ;;
-        "INFO")
-            color=$GREEN
-            ;;
-        *)
-            color=$NC
-            ;;
-        esac
-
-        # Formats the entry
-        entry="[$timestamp] ${color}$1: $2 > $3${NC}"
-
-        # Creates the log file if it doesn't already exist on the specified path
-        if [ ! -f $LOG ]
-        then echo "[$timestamp] INFO: 0 > Created log for the PaperMC updater script." > $LOG
-        fi
-
-        # Verbose progress and errors instead of logging them if the execution is manual instead of a cron job
-        if [ $exec_mode == "manual" ]
-        then echo -e "$entry"
-        elif [ $exec_mode == "auto" ]
-        then echo -e "$entry" >> $LOG
-        fi
-
-return 0
-}
-
 # Handles errors and warnings, acting accordingly
 handler() {
-    local report_type=$1
-    local report_code=$2
-    local report_message=$3
-    # List of the codes that will lead to a server restart 
-    local restart_codes=(5 8 9)
+        local report_type=$1
+        local report_code=$2
+        local report_message=$3
+        # List of the codes that will lead to a server restart 
+        local restart_codes=(5 8 9)
 
-    log_entry "$report_type" "$report_code" "$report_message"
+        # Actually records entries to the log, plus colors them to easly differenciate severity
+        log_entry() {
+                local timestamp=$(date +"%Y-%m-%d | %H:%M:%S")
 
-    # Restart the server with the previously used PaperMC build if there has been an error contained in the array
-    if [[ "${restart_codes[@]}" =~ $report_code ]]
-    then
+                # ANSI escape codes for colors
+                RED='\033[0;31m'
+                YELLOW='\033[1;33m'
+                GREEN='\033[0;32m'
+                NC='\033[0m' # No color
 
-        # If the previously used PaperMC build has been archived, move it back
-        if [[ (! -f $papermc_path/paper-*-$current_build.jar) && (-f $ARCHIVE/paper-*-$current_build.jar) ]]
-        then mv $ARCHIVE/paper-*-$current_build.jar $papermc_path
+                case $1 in
+                "ERROR")
+                color=$RED
+                ;;
+                "WARNING")
+                color=$YELLOW
+                ;;
+                "INFO")
+                color=$GREEN
+                ;;
+                *)
+                color=$NC
+                ;;
+                esac
+
+                # Formats the entry
+                entry="[$timestamp] ${color}$1: $2 > $3${NC}"
+
+                # Creates the log file if it doesn't already exist on the specified path
+                if [ ! -f $LOG ]
+                then echo "[$timestamp] INFO: 0 > Created log for the PaperMC updater script." > $LOG
+                fi
+
+                # Verbose progress and errors instead of logging them if the execution is manual instead of a cron job
+                if [ $exec_mode == "manual" ]
+                then echo -e "$entry"
+                elif [ $exec_mode == "auto" ]
+                then echo -e "$entry" >> $LOG
+                fi
+
+        return 0
+        }
+
+        log_entry "$report_type" "$report_code" "$report_message"
+
+        # Restart the server with the previously used PaperMC build if there has been an error contained in the array
+        if [[ "${restart_codes[@]}" =~ $report_code ]]
+        then
+
+                # If the previously used PaperMC build has been archived, move it back
+                if [[ (! -f $papermc_path/paper-*-$current_build.jar) && (-f $ARCHIVE/paper-*-$current_build.jar) ]]
+                then mv $ARCHIVE/paper-*-$current_build.jar $papermc_path
+                fi
+
+                server_starter "previous" $current_build
         fi
 
-        server_starter "previous" $current_build
-    fi
-
-    # Exit the script only if the call was for an error
-    if [[ $report_type == "ERROR" ]]
-    then
-            reporter "NOT" "$report_message"
-            exit $report_code
-    else return $report_code
-    fi
+        # Exit the script only if the call was for an error
+        if [[ $report_type == "ERROR" ]]
+        then
+                reporter "NOT" "$report_message"
+                exit $report_code
+        else return $report_code
+        fi
 
 return 0
 }
