@@ -136,14 +136,14 @@ log_entry() {
 
         # Creates the log file if it doesn't already exist on the specified path
         if [ ! -f $LOG ]
-        then    echo "[$timestamp] INFO: 0 > Created log for the PaperMC updater script." > $LOG
+        then echo "[$timestamp] INFO: 0 > Created log for the PaperMC updater script." > $LOG
         fi
 
         # Verbose progress and errors instead of logging them if the execution is manual instead of a cron job
         if [ $exec_mode == "manual" ]
-        then    echo -e "$entry"
+        then echo -e "$entry"
         elif [ $exec_mode == "auto" ]
-        then    echo -e "$entry" >> $LOG
+        then echo -e "$entry" >> $LOG
         fi
 
 return 0
@@ -165,7 +165,7 @@ handler() {
 
         # If the previously used PaperMC build has been archived, move it back
         if [[ (! -f $papermc_path/paper-*-$current_build.jar) && (-f $ARCHIVE/paper-*-$current_build.jar) ]]
-        then    mv $ARCHIVE/paper-*-$current_build.jar $papermc_path
+        then mv $ARCHIVE/paper-*-$current_build.jar $papermc_path
         fi
 
         server_starter "previous" $current_build
@@ -176,7 +176,7 @@ handler() {
     then
             reporter "NOT" "$report_message"
             exit $report_code
-    else    return $report_code
+    else return $report_code
     fi
 
 return 0
@@ -186,13 +186,13 @@ return 0
 check_input() {
 
     if [[ (! -f $1) && (! -d $1) && ($2 != "<tmuxsession>") ]]
-    then        handler "ERROR" 3 "The specified path for $2 does not exist."
+    then handler "ERROR" 3 "The specified path for $2 does not exist."
     elif [[ $2 == "<tmuxsession>" ]]
     then
                 tmux -S $tmux_session_path has-session -t $1 2> /dev/null
 
                 if [ $? -ne 0 ]
-                then    handler "ERROR" 4 "The specified tmux session '"$1"' does not exist."
+                then handler "ERROR" 4 "The specified tmux session '"$1"' does not exist."
                 fi
 
     fi
@@ -235,6 +235,10 @@ get() {
                 handler "INFO" 0 "Fetching latest available PaperMC build..."
                 latest_build=$(curl -s "$PAPER_API_URL/versions/$mc_version" | jq -r '.builds[]' | sort -rn | head -1)
                 ;;
+        current_version)
+                handler "INFO" 0 "Checking currently used PaperMC version..."
+                current_version=$(find $papermc_path -name "paper-*" -maxdepth 1 2> /dev/null | grep -Eo "$MC_VERSION_REGEX")
+                ;;
         current_build)
                 handler "INFO" 0 "Checking currently used PaperMC build..."
                 current_build=$(find $papermc_path -name "paper-*" -maxdepth 1 2> /dev/null | grep -Eo "[0-9]\-$BUILD_NUMBER_REGEX\." | grep -Eo "$BUILD_NUMBER_REGEX\." | grep -Eo "$BUILD_NUMBER_REGEX")
@@ -250,11 +254,36 @@ get() {
 
                 # If the error comes from 'current_build', it does not stop the script to try to download it later on
                 if [[ $1 == "current_build" ]]
-                then    handler "WARNING" 6 "Could not determine '$1'."  
-                else    handler "ERROR" 6 "Could not determine '$1'."
+                then handler "WARNING" 6 "Could not determine '$1'."  
+                e handler "ERROR" 6 "Could not determine '$1'."
 fi
                 
         fi
+
+return 0
+}
+
+# Transform version syntax into integers of the same size: 1.20.6 -> 12006, 1.21 -> 12100
+normalize_versions() {
+        local whole_latest=$1
+        local whole_current=$2
+        local regex="^([0-9]+)\.([0-9]+)(\.([0-9]+))?$"
+
+        local normalize() {
+
+                if [[ $1 =~ $regex ]]
+                then
+                        major=${BASH_REMATCH[1]}
+                        rel=${BASH_REMATCH[2]}
+                        ver=${BASH_REMATCH[4]:-0} 
+                        printf "%d%02d%02d" $major $rel $ver
+                fi
+
+        return 0
+        }
+
+        current=$(normalize "$whole_latest")
+        latest=$(normalize "$whole_current")
 
 return 0
 }
@@ -269,10 +298,8 @@ download_latest_build() {
         then
 
                 if [ $2 == "nd" ]
-                then 
-                        handler "ERROR" 11 "The latest PaperMC build could not be downloaded AND there is no other version installed. Exiting."
-
-                else    handler "ERROR" 7 "The latest PaperMC build could not be downloaded."
+                then handler "ERROR" 11 "The latest PaperMC build could not be downloaded AND there is no other version installed. Exiting."
+                else handler "ERROR" 7 "The latest PaperMC build could not be downloaded."
                 fi
 
         else
@@ -285,12 +312,11 @@ download_latest_build() {
                 elif [ -n "$current_build" ]
                 then
                         handler "INFO" 0 "Archiving previous build..."
-
                         mv $papermc_path/paper-*-$current_build.jar $ARCHIVE
 
                         if [ $? -eq 0 ]
-                        then    handler "INFO" 0 "Successfully moved the previous build to the archive."
-                        else    handler "WARNING" 13 "Could not move the previous build to the archive."
+                        then handler "INFO" 0 "Successfully moved the previous build to the archive."
+                        else handler "WARNING" 13 "Could not move the previous build to the archive."
                         fi
 
                 fi
@@ -394,8 +420,11 @@ check_input $tmux_session_name "<tmuxsession>"
 
 get "mc_version"
 get "latest_build"
+get "current_version"
 get "current_build"
 get "build_channel"
+
+normalize_versions $mc_version $current_version
 
 # Despite being a constant, it can't be defined before giving meaning to "mc_version" and "latest_build"
 LATEST_BUILD_LINK="$PAPER_API_URL/versions/$mc_version/builds/$latest_build/downloads/paper-$mc_version-$latest_build.jar"
@@ -408,14 +437,14 @@ then
         mkdir $ARCHIVE
 
         if [ $? -ne 0 ]
-        then    handler "ERROR" 8 "Could not create the archives directory. It is necessary for archiving previously working .jars in a tidied manner."
-        else    handler "INFO" 0 "Created directory for archiving the latest working PaperMC .jar"
+        then handler "ERROR" 8 "Could not create the archives directory. It is necessary for archiving previously working .jars in a tidied manner."
+        else handler "INFO" 0 "Created directory for archiving the latest working PaperMC .jar"
         fi
 
 fi
 
 # Triggers the update process only if there's a newer version that is NOT experimental, or if the script couldn't find any existing version on the system
-if { [ "$current_build" -lt "$latest_build" ] && { [ "$build_channel" == "default" ] || [ "$experimental_builds_enabled" == "yes" ]; }; } || [ -z "$current_build" ]
+if { { [ "$latest" -eq "$current" ] && [ "$latest_build" -gt "$current_build" ]; }; || { [ "$latest" -gt "$current" ] && { [ "$build_channel" == "default" ] || [ "$experimental_builds_enabled" == "yes" ]; }; }; } || [ -z "$current_build" ]
 then
 
         if [ -z "$current_build" ]
@@ -429,12 +458,12 @@ then
 
                 # Uses `check` to check, since using `$?` could lead to false positives
                 if [ -n "$(pidof java)" ]
-                then    handler "ERROR" 9 "The server failed to stop."
+                then handler "ERROR" 9 "The server failed to stop."
                 fi
 
                 echo "flag="1"" > $FLAGDIR
 
-        else    handler "WARNING" 12 "The PaperMC server was not running."
+        else handler "WARNING" 12 "The PaperMC server was not running."
         fi
 
         if [ -f $papermc_path/paper-$mc_version-$latest_build.jar ]
@@ -449,7 +478,7 @@ then
                         handler "ERROR" 10 "The server failed to start using the latest PaperMC build."
                 fi
 
-        else    handler "ERROR" 12 "The latest PaperMC version could not be found on the system."
+        else handler "ERROR" 12 "The latest PaperMC version could not be found on the system."
         fi
 
         handler "INFO" 0 "The PaperMC server has successfully been updated and restarted."
