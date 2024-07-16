@@ -515,9 +515,12 @@ then
 
         handler "INFO" 0 "The PaperMC server has successfully been updated and restarted."
         reporter "OK" ", and the server has correctly been updated and restarted."
-        reporter "UPDATED"
         echo "flag="0"" > $FLAGDIR
         unclutterer
+
+        if [[ "$latest" -gt "$current" ]]
+        then reporter "UPDATED"
+        fi
 
 elif [ "$build_channel" == "experimental" ] && [ "$experimental_builds_enabled" == "no" ]
 then
