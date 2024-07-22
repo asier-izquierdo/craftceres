@@ -273,8 +273,8 @@ get() {
                 # If the error comes from 'current_build', it does not stop the script to try to download it later on
                 if [[ $1 == "current_build" ]]
                 then handler "WARNING" 6 "Could not determine '$1'."  
-                e handler "ERROR" 6 "Could not determine '$1'."
-fi
+                else handler "ERROR" 6 "Could not determine '$1'."
+                fi
                 
         fi
 
