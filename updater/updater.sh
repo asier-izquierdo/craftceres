@@ -109,7 +109,7 @@ return 0
 # Starts the PaperMC Java job with the specified build
 server_starter() {
         handler "INFO" 0 "Starting the server with the $1 build..."
-        sleep 20
+        sleep 30
         tmux -S $tmux_session_path send-keys -t $tmux_session_name:0 "(cd $papermc_path && java -Xms2G -Xmx16G -jar $papermc_path/paper-$mc_version-$2.jar nogui)" Enter
 
 return 0
