@@ -130,7 +130,7 @@ handler() {
         local report_code=$2
         local report_message=$3
         # List of the codes that will lead to a server restart 
-        local restart_codes=(5 8 9)
+        local restart_codes=(5 8 10)
 
         # Actually records entries to the log, plus colors them to easly differenciate severity
         log_entry() {
