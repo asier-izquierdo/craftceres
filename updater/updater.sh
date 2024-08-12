@@ -177,18 +177,18 @@ handler() {
 
         log_entry "$report_type" "$report_code" "$report_message"
 
-        found=false
+        found=0
         for code in "${restart_codes[@]}"
                 do
                 if [[ "$code" == "$report_code" ]]
                 then
-                        found=true
+                        found=1
                         break
                 fi
         done
 
         # Restart the server with the previously used PaperMC build if there has been an error contained in the array
-        if [[ $found ]]
+        if [[ $found == 1 ]]
         then
 
                 # If the previously used PaperMC build has been archived, move it back
