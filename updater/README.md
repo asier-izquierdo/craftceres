@@ -5,6 +5,10 @@ _The Updater script is designed to be a one-time set-up that is periodically run
 Currently supports Minecraft updates only up to version 1.99.99.\
 Designed to update _any_ Linux PaperMC server setup. It should be run with `sudo` unless set as a cron job since PaperMC is (or should be) run by a user with limited permissions.
 
+If set as a cron job, the format should be as follows:\
+`* * * * * CRON=true /path-to-script/updater.sh`\
+Naturally, you should substitute the asterisks for whatever periodicity you may need, but you have to set the CRON enviromental variable because this is what will tell the script that is running automatically, and should log its events.
+
 The Updater relies on the following packages to work:[^1]
 
  - `tmux`[^2]
