@@ -177,7 +177,7 @@ handler() {
 
         log_entry "$report_type" "$report_code" "$report_message"
 
-        found=0
+        local found=0
         for code in "${restart_codes[@]}"
                 do
                 if [[ "$code" == "$report_code" ]]
