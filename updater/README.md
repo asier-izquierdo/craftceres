@@ -44,7 +44,7 @@ tmux_session:
 consists on the 'papermc' path, that is, the parent directory under which the server files are located, and the `tmux` session information.\
 All of the configuration paths **must** be absolute, and **it is sensible that they doesn't end with a slash**, so (using the papermc path as an example):
 
- - `path: /home/user/craftceres` is a valid definition.\
+ - `path: /home/user/craftceres` is a valid definition.
  - `path: /home/user/craftceres/` is NOT a valid definition.
 
 The `tmux` session information consists on the name you gave (or have to give) the session created for the server, since that's an accurate way to interact with it, and the path under which the session data is located. The name should be able to be defined using double quotes, according to the parser function's author, but I have not tested it.
@@ -77,7 +77,7 @@ There's an optional feature in the Updater[^4] which allows the script to send a
 
 The Discord reporter doesn't need `adminid` unless the intention is to ping the admin and the current script doesn't since it mentions everyone (because the CraftCeres Discord has an administration channel for admins/mods). 
 
-The telegram reporter, needs all elements to be properly set in order for it to work.
+The Telegram reporter, needs all elements to be properly set in order for it to work.
 
 - `id` should contain the ID of the chat with the bot you created.
 - `token` should contain the API token for the bot, found in the URL with the format:\
