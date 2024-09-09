@@ -490,7 +490,7 @@ if {
 }
 then
 
-        [[ "$is_there_installation" == "false" ]]
+        if [[ "$is_there_installation" == "false" ]]
         then download_latest_build $LATEST_BUILD_LINK "nd"
         else
                 if [[ "$build_channel" == "experimental" ]] && [[ "$experimental_builds_enabled" == "yes" ]]
