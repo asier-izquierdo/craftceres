@@ -452,7 +452,7 @@ get "current_version"
 get "current_build"
 get "build_channel"
 
-if [ -n $current_version]
+if [[ -n "$current_version" ]]
 then
         normalize_versions $mc_version $current_version
         is_there_installation="true"
