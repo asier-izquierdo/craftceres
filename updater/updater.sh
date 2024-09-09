@@ -280,8 +280,8 @@ get() {
         if [[ ($? != 0) || (-z "$$1") ]]
         then    
 
-                # If the error comes from 'current_build', it does not stop the script to try to download it later on
-                if [[ $1 == "current_build" ]]
+                # If the error comes from 'current_version' or 'current_build', it does not stop the script to try to download it later on
+                if [[ $1 == "current_version" || $1 == "current_build" ]]
                 then handler "WARNING" 6 "Could not determine '$1'."  
                 else handler "ERROR" 6 "Could not determine '$1'."
                 fi
@@ -452,7 +452,13 @@ get "current_version"
 get "current_build"
 get "build_channel"
 
-normalize_versions $mc_version $current_version
+if [ -n $current_version]
+then
+        normalize_versions $mc_version $current_version
+        is_there_installation="true"
+elif [[ -z "$current_version" || -z "$current_build" ]]
+then    is_there_installation="false"
+fi
 
 # Despite being a constant, it can't be defined before giving meaning to "mc_version" and "latest_build"
 LATEST_BUILD_LINK="$PAPER_API_URL/versions/$mc_version/builds/$latest_build/downloads/paper-$mc_version-$latest_build.jar"
@@ -472,18 +478,18 @@ then
 fi
 
 if {
-        # The version remains the same but there is a new build
+        # There is no previous installation
+        [[ "$is_there_installation" == "false" ]] ||
+        # Or the version remains the same but there is a new build
         { [[ "$latest" -eq "$current" ]] && [[ "$latest_build" -gt "$current_build" ]]; } ||
         # Or there is a new version
         { [[ "$latest" -gt "$current" ]] &&
                 # That either is stable or is experimental but has been allowed
                 { [[ "$build_channel" == "default" ]] || [[ "$experimental_builds_enabled" == "yes" ]]; }
         }
-        # Or there is no previous installation
-        } || [[ -z "$current_build" ]]
 then
 
-        if [ -z "$current_build" ]
+        [[ "$is_there_installation" == "false" ]]
         then download_latest_build $LATEST_BUILD_LINK "nd"
         else
                 if [[ "$build_channel" == "experimental" ]] && [[ "$experimental_builds_enabled" == "yes" ]]
